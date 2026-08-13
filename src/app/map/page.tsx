@@ -53,7 +53,12 @@ export default async function MapPage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col">
+    // `data-wide-shell` — read by `AppShell` via `:has()`. The map wants its
+    // region panel BESIDE it rather than under it once there is room, which
+    // only happens at `lg`; see `RegionExplorer` for what the extra width buys
+    // at each breakpoint. The no-regions branch above stays in the narrow
+    // column — it is one short message, and width would only strand it.
+    <main data-wide-shell className="flex flex-1 flex-col">
       <BackButton />
       <PageHeader
         title="Explore by region"

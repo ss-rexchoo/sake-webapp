@@ -95,7 +95,15 @@ export interface ResultCardProps {
   tags?: string[];
   /** Left slot: a `MatchBadge`, a `ResultBadge` with a short label, an icon, … */
   badge?: ReactNode;
-  /** Position in a list — drives the stagger-in delay. */
+  /**
+   * Position in a list — drives the stagger-in delay.
+   *
+   * May be fractional. A grid has rows rather than a single line, so the search
+   * screen passes `index / columns`: the whole part is the row and the fraction
+   * is the position within it, which keeps the cascade reading left-to-right
+   * and row-by-row at any column count. The cap below then counts rows, not
+   * cards.
+   */
   index?: number;
   /** Seconds between siblings. Tighter for long lists (search), looser for a 3-up reveal. */
   staggerStep?: number;

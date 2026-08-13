@@ -54,7 +54,10 @@ export default async function SearchPage({
     }));
 
   return (
-    <main className="flex flex-1 flex-col">
+    // `data-wide-shell` — read by `AppShell` via `:has()`. Search is a
+    // catalogue, and a catalogue wants a grid: the extra width becomes two
+    // columns of results at `md` and three at `lg` rather than a longer scroll.
+    <main data-wide-shell className="flex flex-1 flex-col">
       <BackButton />
       <PageHeader
         title="Search sake"

@@ -69,23 +69,47 @@ export default function LandingPage() {
     // comfortable one-handed reach. `safe` centring keeps the top of the block
     // reachable if content ever exceeds the viewport (landscape, large type),
     // where plain `justify-center` would clip it unscrollably.
-    <main className="flex flex-1 flex-col [justify-content:safe_center] pb-[6vh]">
-      {/* The kicker labels the hero, so it stays tight to it. */}
-      <Kicker className="mb-1.5">{VENUE_LABEL}</Kicker>
+    // `data-wide-shell` is read by `AppShell` (via `:has()`): this screen is a
+    // list of three equal choices, not a single decision, so it takes the wider
+    // column — 768px at `md`, 1088px at `lg` — and lays the cards out in a row.
+    <main
+      data-wide-shell
+      className="flex flex-1 flex-col [justify-content:safe_center] pb-[6vh]"
+    >
+      {/*
+       * The kicker labels the hero, so it stays tight to it.
+       *
+       * The hero block — kicker, title, English line — centres from `md`, where
+       * the cards become a symmetric row of three. Left-flush is right on a
+       * phone, where the hero and the cards share one edge; across 1024px it
+       * would leave the title stranded in the top-left corner of a symmetric
+       * triptych, which is the "stretched, not designed" look this widening
+       * exists to avoid. The cards keep their own left-flush interior — only
+       * the hero recentres, so the three tap targets still read as a list.
+       */}
+      <Kicker className="mb-1.5 md:text-center">{VENUE_LABEL}</Kicker>
 
       {/* The hero itself rides in on the route transition (see PageTransition);
           only the cards animate independently, so they read as arriving after it. */}
       {/* One step up from `md`, in step with `PageHeader` and the sake name —
           the hero stays the largest type in the app at every width. */}
-      <h1 className="font-display text-[30px] leading-[1.3] font-bold md:text-[34px]">
+      <h1 className="font-display text-[30px] leading-[1.3] font-bold md:text-center md:text-[34px]">
         今夜、どんな日本酒？
       </h1>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-muted md:text-center">
         What kind of sake are you feeling tonight?
       </p>
 
+      {/*
+       * One column on a phone, a row of three equal columns from `md`.
+       *
+       * The stagger is untouched and needs to be: `staggerChildren` follows DOM
+       * order, which in a row is left to right, so the same variants that make
+       * the cards arrive top-to-bottom on a phone make them arrive
+       * left-to-right on a laptop. Nothing here is breakpoint-aware.
+       */}
       <motion.ul
-        className="mt-[30px] flex flex-col gap-3"
+        className="mt-[30px] flex flex-col gap-3 md:mt-9 md:flex-row md:gap-4 lg:gap-5"
         initial="hidden"
         animate="show"
         variants={{
@@ -99,7 +123,10 @@ export default function LandingPage() {
         }}
       >
         {METHODS.map(({ href, title, sub, icon: Icon, chip }) => (
-          <li key={href} className="flex">
+          // `md:flex-1` with no basis: three items sharing the row equally,
+          // and `min-w-0` so a long sub line wraps inside its card instead of
+          // widening one column at the other two's expense.
+          <li key={href} className="flex md:min-w-0 md:flex-1">
             <MotionLink
               href={href}
               variants={{
@@ -121,7 +148,22 @@ export default function LandingPage() {
               // No `ring-offset`: the offset paints a solid --bg band, but the
               // page behind is a radial gradient nearer --bg2 at the top, so the
               // band reads as a mismatched halo. A 2px gold ring is plenty.
-              className="flex w-full items-center gap-3.5 rounded-lg border border-cream/14 surface-6 p-4 text-left transition-colors duration-200 hover:bg-cream/12 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+              // From `md` the card turns on its side: chip above the words
+              // rather than beside them. A third of the row is ~229px at `md`,
+              // and a horizontal card spends 86px of that on the chip, its gap
+              // and the padding — leaving 143px of measure and a sub line that
+              // wraps twice. Stacking hands the text the full card width and
+              // buys height, which is the direction a tap target should grow.
+              // `items-stretch` overrides the phone's `items-center` so the
+              // text block fills the card; the chip keeps its own fixed size.
+              //
+              // One more step of padding at `lg`. The card's box grows sideways
+              // there (229x162 at `md`, 328x143 without this) while its content
+              // still stacks downwards, so the widest breakpoint is where a
+              // portrait arrangement would sit in a landscape box. Growing the
+              // padding rather than re-flipping the card keeps one shape across
+              // both wide breakpoints, and buys the height a tap target wants.
+              className="flex w-full items-center gap-3.5 rounded-lg border border-cream/14 surface-6 p-4 text-left transition-colors duration-200 hover:bg-cream/12 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none md:flex-col md:items-stretch md:gap-4 md:p-5 lg:gap-5 lg:p-6"
             >
               <span
                 className={`flex size-10 shrink-0 items-center justify-center rounded-[10px] ${chip}`}

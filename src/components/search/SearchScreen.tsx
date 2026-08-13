@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
-import { Wine, X } from "lucide-react";
+import { Search, Wine, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { ResultBadge, ResultCard } from "@/components/ResultCard";
@@ -22,6 +22,50 @@ const MotionLink = motion.create(Link);
  * every letter of "Hakkaisan".
  */
 const SETTLE_MS = 400;
+
+/**
+ * How many columns the results grid is showing — the Tailwind breakpoints the
+ * `<ul>` below uses, read back in JS.
+ *
+ * Only the stagger needs this. The layout is pure CSS; the *arrival order* is
+ * not, because Motion delays are numbers rather than media queries. In one
+ * column the reading order is the DOM order and `index` is the right clock. In
+ * three, the eye reads rows, so a flat `index * step` spends the whole cascade
+ * on the first two rows and then — past `ResultCard`'s cap of 6 — drops the
+ * remaining six cards on screen simultaneously, which reads as a glitch rather
+ * than as arrival.
+ *
+ * Dividing `index` by the column count fixes it in one stroke: the cascade
+ * advances a full step per ROW and splits that step between the cards in the
+ * row, so a 12-bottle fridge lands inside the same ~0.5s window whether that is
+ * twelve rows or four, and the cap still bites at six rows. At one column the
+ * division is by 1 — the phone's timing is untouched, to the millisecond.
+ *
+ * The two widths below are Tailwind's `md` and `lg`, restated rather than
+ * shared: a media query string cannot hold a CSS variable, and Tailwind v4 only
+ * emits `--breakpoint-*` if something already uses it. The source of truth is
+ * the `<ul>`'s `md:grid-cols-2 lg:grid-cols-3` further down — change one and
+ * change the other. Drift costs a slightly oddly-paced cascade and nothing
+ * else: the layout never reads this.
+ */
+const GRID_BREAKPOINTS: ReadonlyArray<readonly [string, number]> = [
+  ["(min-width: 64rem)", 3],
+  ["(min-width: 48rem)", 2],
+];
+
+function readColumns(): number {
+  // SSR renders the one-column number. That is not a hydration hazard: the
+  // delay never reaches the DOM — Motion serialises `initial`, which is the
+  // same for every card, and applies `transition` only once it is animating on
+  // the client.
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return 1;
+  }
+  for (const [query, columns] of GRID_BREAKPOINTS) {
+    if (window.matchMedia(query).matches) return columns;
+  }
+  return 1;
+}
 
 function describeResults(count: number, hasQuery: boolean): string {
   if (!hasQuery) {
@@ -55,6 +99,13 @@ export function SearchScreen({
    * in on its own — same duration, no delay.
    */
   const [hasTyped, setHasTyped] = useState(false);
+
+  /**
+   * Read once, on mount, and deliberately never re-read. The stagger is a
+   * property of the list *arriving*; resizing the window mid-session does not
+   * re-mount the cards, so there is nothing for a live value to correct.
+   */
+  const [columns] = useState(readColumns);
 
   const trimmed = query.trim();
   const results = filterRows(rows, query);
@@ -141,6 +192,15 @@ export function SearchScreen({
             // the focus mark here, so a second gold halo would double it.
             "h-12 rounded-md border-cream/20 surface-8 px-3.5 pr-11 text-cream " +
             "placeholder:text-muted " +
+            // Room for the leading mark, and a taller bar once the field is
+            // 1024px wide — see the two notes below.
+            // `lg:text-base` on its own loses: shadcn's base class carries
+            // `[@media(pointer:fine)]:text-sm`, which is a variant of equal
+            // weight and sorts later, so the 14px desktop size wins and the
+            // class is dead. Stacking the same media condition under `lg` is
+            // what actually beats it — and it keeps shadcn's reason for the
+            // rule intact, since a coarse pointer still gets 16px everywhere.
+            "md:pl-11 lg:h-14 lg:[@media(pointer:fine)]:text-base " +
             // 200ms, not shadcn's unqualified `transition-colors` (150ms): the
             // border warming to gold on focus runs on the same clock as every
             // other surface in the app.
@@ -151,6 +211,28 @@ export function SearchScreen({
             "[&::-webkit-search-cancel-button]:appearance-none"
           }
         />
+
+        {/*
+         * A leading mark, and only from `md`.
+         *
+         * On a 350px field the placeholder is never far from the caret and the
+         * clear button is a thumb's width away, so nothing needs labelling. At
+         * `lg` the field is 1024px: the typed text sits at the far left and the
+         * clear button at the far right, ~970px apart, and a long empty trough
+         * with content at one end only reads as a stretched input rather than
+         * as a search bar. The mark closes the other end.
+         *
+         * Geometrically the mirror of the clear button — same `w-10` box, same
+         * 4px inset — so the two bookends sit at matching distances from their
+         * own edges. Inert: `pointer-events-none` so a tap on it still lands in
+         * the field, and `aria-hidden` because the field already has a label.
+         */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-1 hidden w-10 items-center justify-center text-muted md:flex"
+        >
+          <Search className="size-4" />
+        </span>
 
         {/*
          * Faded, not popped. This is the one control on the screen that
@@ -195,7 +277,16 @@ export function SearchScreen({
       {matchCount === 0 ? (
         <EmptyState query={trimmed} catalogueEmpty={rows.length === 0} />
       ) : (
-        <ul className="flex flex-col gap-3">
+        /*
+         * One column on a phone, two from `md`, three from `lg`. A grid rather
+         * than a wrapping flex row so every card in a row shares the tallest
+         * one's height — an out-of-stock row carries an extra line, and ragged
+         * card bottoms across three columns read as a rendering fault.
+         *
+         * `grid-cols-1` is exactly what `flex flex-col` was at phone widths:
+         * one full-width track, the same 12px gap, rows sized by content.
+         */
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {results.map((row, index) => (
             <li key={row.id} className="flex">
               <ResultCard
@@ -231,7 +322,10 @@ export function SearchScreen({
                     />
                   </ResultBadge>
                 }
-                index={index}
+                // Fractional on purpose — see `readColumns`. `index / columns`
+                // is the card's ROW plus its position within that row, so the
+                // cascade sweeps left-to-right, row by row, at every width.
+                index={index / columns}
                 staggerStep={hasTyped ? 0 : STAGGER_STEP}
                 className={
                   row.inStock
@@ -277,7 +371,11 @@ function EmptyState({
   catalogueEmpty: boolean;
 }) {
   return (
-    <div className="mt-2 text-center">
+    // Capped and centred rather than stretched: this is one short message, and
+    // a heading plus two lines spread across a 1024px grid would read as a
+    // banner. The measure it keeps at `md` is close to the phone's, which is
+    // the width the copy was written for.
+    <div className="mt-2 text-center md:mx-auto md:max-w-[26rem]">
       <span aria-hidden="true" className="mx-auto mb-3.5 block h-px w-10 bg-gold/45" />
 
       {catalogueEmpty ? (

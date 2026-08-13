@@ -136,207 +136,244 @@ export function SakeForm({
       {sake ? <input type="hidden" name="id" value={sake.id} /> : null}
       <input type="hidden" name="in_stock" value={inStock ? "true" : "false"} />
 
-      <Section title="Identity">
-        <Field label="Name (English)" htmlFor="name_en" error={errorFor("name_en")}>
-          <Input
-            id="name_en"
-            name="name_en"
-            value={fields.name_en}
-            onChange={(e) => set("name_en")(e.target.value)}
-            required
-            aria-invalid={errorFor("name_en") ? true : undefined}
-            aria-describedby={describedBy("name_en")}
-            className={inputClass}
-          />
-        </Field>
+      {/* One column of sections until `lg`, where `data-admin-shell` opens the
+          page to 1248px and a single 1184px-wide stack of 44px-tall inputs
+          becomes a very long scroll of very short lines. Two columns then:
 
-        <Field label="Name (Japanese)" htmlFor="name_jp">
-          <Input
-            id="name_jp"
-            name="name_jp"
-            value={fields.name_jp}
-            onChange={(e) => set("name_jp")(e.target.value)}
-            className={inputClass}
-          />
-        </Field>
+            left   Identity, In the fridge — the record. What the bottle is,
+                   which slot it sits in, what it costs, whether it is there.
+                   Typed once when a case arrives, and the three fields staff
+                   come back to.
+            right  Taste, Description & pairing, Image — the judgement. The two
+                   scored axes the recommender reads, the sentence a guest sees,
+                   and the photo.
 
-        <Field label="Brewery" htmlFor="brewery">
-          <Input
-            id="brewery"
-            name="brewery"
-            value={fields.brewery}
-            onChange={(e) => set("brewery")(e.target.value)}
-            className={inputClass}
-          />
-        </Field>
+          The split is where it is for two reasons. It is the only *contiguous*
+          cut of the existing order, so the DOM order — and therefore the phone
+          stack — is untouched: no `order` utilities, no second render. And it
+          balances: measured at 1440 the columns come out 912px and 1104px,
+          against 594px / 1442px for a cut that puts Identity alone on the left,
+          which leaves an 850px void beside the form.
 
-        <Field label="Prefecture" htmlFor="prefecture">
-          <Input
-            id="prefecture"
-            name="prefecture"
-            value={fields.prefecture}
-            onChange={(e) => set("prefecture")(e.target.value)}
-            className={inputClass}
-          />
-        </Field>
+          Below `lg` both wrappers are plain flex columns carrying the same
+          `gap-4` the form itself had, so the five sections stack in exactly the
+          order and spacing they always did. */}
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
+        {/* Left at `lg`: the record as staff type it — what the bottle is,
+            and where it sits in the fridge at what price. */}
+        <div className="flex flex-col gap-4 lg:gap-5">
+          <Section title="Identity">
+            <Field label="Name (English)" htmlFor="name_en" error={errorFor("name_en")}>
+              <Input
+                id="name_en"
+                name="name_en"
+                value={fields.name_en}
+                onChange={(e) => set("name_en")(e.target.value)}
+                required
+                aria-invalid={errorFor("name_en") ? true : undefined}
+                aria-describedby={describedBy("name_en")}
+                className={inputClass}
+              />
+            </Field>
 
-        <Field
-          label="Region"
-          htmlFor="region_id"
-          hint="Where it appears on the Explore Japan map."
-          error={errorFor("region_id")}
-        >
-          <select
-            id="region_id"
-            name="region_id"
-            value={fields.region_id}
-            onChange={(e) => set("region_id")(e.target.value)}
-            aria-invalid={errorFor("region_id") ? true : undefined}
-            aria-describedby={describedBy("region_id")}
-            className={selectClass}
-          >
-            <option value="">Not set</option>
-            {regions.map((region) => (
-              <option key={region.id} value={region.id}>
-                {region.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+            <Field label="Name (Japanese)" htmlFor="name_jp">
+              <Input
+                id="name_jp"
+                name="name_jp"
+                value={fields.name_jp}
+                onChange={(e) => set("name_jp")(e.target.value)}
+                className={inputClass}
+              />
+            </Field>
 
-        <Field
-          label="Category"
-          htmlFor="category"
-          hint="Junmai, Ginjo, Daiginjo… Free text — pick from the list or type your own."
-        >
-          <Input
-            id="category"
-            name="category"
-            list="sake-categories"
-            value={fields.category}
-            onChange={(e) => set("category")(e.target.value)}
-            className={inputClass}
-          />
-          <datalist id="sake-categories">
-            {CATEGORIES.map((category) => (
-              <option key={category} value={category} />
-            ))}
-          </datalist>
-        </Field>
-      </Section>
+            <Field label="Brewery" htmlFor="brewery">
+              <Input
+                id="brewery"
+                name="brewery"
+                value={fields.brewery}
+                onChange={(e) => set("brewery")(e.target.value)}
+                className={inputClass}
+              />
+            </Field>
 
-      <Section title="In the fridge">
-        <Field
-          label="Fridge number"
-          htmlFor="fridge_number"
-          hint="The number the guest walks up to. Whole numbers only."
-          error={errorFor("fridge_number")}
-        >
-          <Input
-            id="fridge_number"
-            name="fridge_number"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            step={1}
-            required
-            value={fields.fridge_number}
-            onChange={(e) => set("fridge_number")(e.target.value)}
-            aria-invalid={errorFor("fridge_number") ? true : undefined}
-            aria-describedby={describedBy("fridge_number")}
-            className={inputClass}
-          />
-        </Field>
+            <Field label="Prefecture" htmlFor="prefecture">
+              <Input
+                id="prefecture"
+                name="prefecture"
+                value={fields.prefecture}
+                onChange={(e) => set("prefecture")(e.target.value)}
+                className={inputClass}
+              />
+            </Field>
 
-        <Field
-          label="Price (RM)"
-          htmlFor="price"
-          hint="Malaysian ringgit — what the guest sees on the bottle card."
-          error={errorFor("price")}
-        >
-          <Input
-            id="price"
-            name="price"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="0.01"
-            value={fields.price}
-            onChange={(e) => set("price")(e.target.value)}
-            aria-invalid={errorFor("price") ? true : undefined}
-            aria-describedby={describedBy("price")}
-            className={inputClass}
-          />
-        </Field>
+            <Field
+              label="Region"
+              htmlFor="region_id"
+              hint="Where it appears on the Explore Japan map."
+              error={errorFor("region_id")}
+            >
+              <select
+                id="region_id"
+                name="region_id"
+                value={fields.region_id}
+                onChange={(e) => set("region_id")(e.target.value)}
+                aria-invalid={errorFor("region_id") ? true : undefined}
+                aria-describedby={describedBy("region_id")}
+                className={selectClass}
+              >
+                <option value="">Not set</option>
+                {regions.map((region) => (
+                  <option key={region.id} value={region.id}>
+                    {region.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-        <div className="flex items-center justify-between gap-3">
-          <label htmlFor="in_stock_switch" className="text-[13px] text-cream">
-            In stock
-          </label>
-          <Switch
-            id="in_stock_switch"
-            className={ADMIN_SWITCH}
-            checked={inStock}
-            onCheckedChange={setInStock}
-          />
+            <Field
+              label="Category"
+              htmlFor="category"
+              hint="Junmai, Ginjo, Daiginjo… Free text — pick from the list or type your own."
+            >
+              <Input
+                id="category"
+                name="category"
+                list="sake-categories"
+                value={fields.category}
+                onChange={(e) => set("category")(e.target.value)}
+                className={inputClass}
+              />
+              <datalist id="sake-categories">
+                {CATEGORIES.map((category) => (
+                  <option key={category} value={category} />
+                ))}
+              </datalist>
+            </Field>
+          </Section>
+          <Section title="In the fridge">
+            <Field
+              label="Fridge number"
+              htmlFor="fridge_number"
+              hint="The number the guest walks up to. Whole numbers only."
+              error={errorFor("fridge_number")}
+            >
+              <Input
+                id="fridge_number"
+                name="fridge_number"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                step={1}
+                required
+                value={fields.fridge_number}
+                onChange={(e) => set("fridge_number")(e.target.value)}
+                aria-invalid={errorFor("fridge_number") ? true : undefined}
+                aria-describedby={describedBy("fridge_number")}
+                className={inputClass}
+              />
+            </Field>
+
+            <Field
+              label="Price (RM)"
+              htmlFor="price"
+              hint="Malaysian ringgit — what the guest sees on the bottle card."
+              error={errorFor("price")}
+            >
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step="0.01"
+                value={fields.price}
+                onChange={(e) => set("price")(e.target.value)}
+                aria-invalid={errorFor("price") ? true : undefined}
+                aria-describedby={describedBy("price")}
+                className={inputClass}
+              />
+            </Field>
+
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor="in_stock_switch" className="text-[13px] text-cream">
+                In stock
+              </label>
+              <Switch
+                id="in_stock_switch"
+                className={ADMIN_SWITCH}
+                checked={inStock}
+                onCheckedChange={setInStock}
+              />
+            </div>
+          </Section>
+
         </div>
-      </Section>
 
-      <Section title="Taste">
-        <TasteFields
-          defaultSweetness={sake?.sweetness ?? 50}
-          defaultBody={sake?.body ?? 50}
-          errors={{ sweetness: errorFor("sweetness"), body: errorFor("body") }}
-        />
-      </Section>
+        {/* Right at `lg`: how it tastes and how we describe it — the
+            judgement work, and the tall taste block that balances the two
+            columns. Below `lg` this wrapper is just more of the same stack. */}
+        <div className="flex flex-col gap-4 lg:gap-5">
+          <Section title="Taste">
+            <TasteFields
+              defaultSweetness={sake?.sweetness ?? 50}
+              defaultBody={sake?.body ?? 50}
+              errors={{ sweetness: errorFor("sweetness"), body: errorFor("body") }}
+            />
+          </Section>
 
-      <Section title="Description & pairing">
-        <Field
-          label="Tasting description"
-          htmlFor="description"
-          hint="One or two sentences, in plain language — no junmai/ginjo vocabulary here."
-        >
-          <Textarea
-            id="description"
-            name="description"
-            rows={3}
-            value={fields.description}
-            onChange={(e) => set("description")(e.target.value)}
-          />
-        </Field>
+          <Section title="Description & pairing">
+            <Field
+              label="Tasting description"
+              htmlFor="description"
+              hint="One or two sentences, in plain language — no junmai/ginjo vocabulary here."
+            >
+              <Textarea
+                id="description"
+                name="description"
+                rows={3}
+                value={fields.description}
+                onChange={(e) => set("description")(e.target.value)}
+              />
+            </Field>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[13px] text-cream">Food pairing</span>
-          <TagEditor
-            key={sake?.id ?? "new"}
-            initialTags={sake?.food_pairing ?? []}
-          />
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] text-cream">Food pairing</span>
+              <TagEditor
+                key={sake?.id ?? "new"}
+                initialTags={sake?.food_pairing ?? []}
+              />
+            </div>
+          </Section>
+
+          <Section title="Image">
+            <Field
+              label="Image URL"
+              htmlFor="image_url"
+              hint="Optional. A full web address — the app does not host uploads yet."
+              error={errorFor("image_url")}
+            >
+              <Input
+                id="image_url"
+                name="image_url"
+                type="url"
+                inputMode="url"
+                placeholder="https://"
+                value={fields.image_url}
+                onChange={(e) => set("image_url")(e.target.value)}
+                aria-invalid={errorFor("image_url") ? true : undefined}
+                aria-describedby={describedBy("image_url")}
+                className={inputClass}
+              />
+            </Field>
+          </Section>
         </div>
-      </Section>
+      </div>
 
-      <Section title="Image">
-        <Field
-          label="Image URL"
-          htmlFor="image_url"
-          hint="Optional. A full web address — the app does not host uploads yet."
-          error={errorFor("image_url")}
-        >
-          <Input
-            id="image_url"
-            name="image_url"
-            type="url"
-            inputMode="url"
-            placeholder="https://"
-            value={fields.image_url}
-            onChange={(e) => set("image_url")(e.target.value)}
-            aria-invalid={errorFor("image_url") ? true : undefined}
-            aria-describedby={describedBy("image_url")}
-            className={inputClass}
-          />
-        </Field>
-      </Section>
-
-      <div className="flex items-center gap-3">
+      {/* Capped at `lg`. The row sits outside the two-column grid, so without
+          this the `flex-1` submit stretches to the full 1184px and a ~1050px
+          slab of vermillion becomes the loudest object on the quietest screen
+          in the app. Full width is right on a phone and wrong on a laptop. */}
+      <div className="flex items-center gap-3 lg:max-w-sm">
         <Button
           type="submit"
           disabled={pending}
