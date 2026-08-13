@@ -426,7 +426,13 @@ function EmptyStateLink({
       className={
         "inline-flex items-center rounded-full border border-cream/20 surface-8 " +
         "px-4 py-2 text-[13px] text-cream transition-colors duration-200 " +
-        "hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+        "hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none " +
+        // 37.5px rendered, under the app's 44px minimum touch target. Same fix
+        // as `BackButton`: an invisible inset lifts the HIT AREA while the pill
+        // keeps the size it was reviewed at — 37.5 + 2x4 = 45.5px. `relative` is
+        // needed here (unlike `BackButton`, which is already `absolute`) so the
+        // pseudo-element resolves against the pill rather than the page.
+        "relative before:absolute before:-inset-x-1 before:-inset-y-1 before:content-['']"
       }
     >
       {children}

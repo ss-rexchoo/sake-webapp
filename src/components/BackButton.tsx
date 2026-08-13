@@ -36,6 +36,18 @@ export function BackButton({ className }: { className?: string }) {
         "rounded-full border border-cream/20 surface-8 py-[7px] pr-3 pl-2.5",
         "text-[13px] text-cream transition-colors duration-200",
         "hover:bg-cream/16 active:bg-cream/16",
+        // The pill renders 35.5px tall, under the 44px minimum touch target the
+        // rest of the app holds to (`HIT_SIZE` in TasteCompass). Rather than pad
+        // it to 44 — which would change a designer-approved shape and the page's
+        // top spacing — an invisible inset expands the HIT AREA while the pill
+        // keeps its size: 35.5 + 2x5 = 45.5px. 5px not 4px because 4 lands at
+        // 43.5 and misses by half a pixel; the element's height is fractional.
+        //
+        // No `relative` here on purpose. The button is already `absolute`, which
+        // is itself a positioned element, so `::before` resolves against it. A
+        // `relative` in this same list would be a second position value fighting
+        // the first, decided by stylesheet order rather than by anything legible.
+        "before:absolute before:-inset-x-1 before:-inset-y-[5px] before:content-['']",
         // No `ring-offset` — see the note on the landing method card.
         "focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
         className,

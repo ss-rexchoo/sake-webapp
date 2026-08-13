@@ -97,13 +97,19 @@ export const REVEAL_EXIT = 0.22;
 export const PANEL_EXIT = 0.14;
 
 /**
- * Easing for a continuous, looping "breath" — the fridge badge's glow and scale.
+ * Easing for a continuous, looping "breath".
  *
  * Symmetric on purpose, and the one case where `EASE_SOFT` is wrong: an ease-out
  * decelerates into its end state, so on a loop the animation lands, stops dead,
  * and restarts at full speed — a visible tick at the seam once per cycle. A
  * symmetric curve has the same velocity leaving the end as entering the start,
- * so the seam disappears and the badge reads as breathing rather than pulsing.
+ * so the seam disappears.
+ *
+ * NOTHING USES THIS TODAY. It was the fridge badge's pulse, which was removed —
+ * see the note in `FridgeBadge.tsx` on why that badge deliberately does not
+ * loop. Kept because it is the correct curve for any future looping element and
+ * the reasoning above is the part that would be expensive to rediscover; delete
+ * it freely if the app stays loop-free.
  */
 export const EASE_BREATH: [number, number, number, number] = [0.4, 0, 0.6, 1];
 

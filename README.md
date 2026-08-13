@@ -39,6 +39,27 @@ Go to <http://localhost:3000/admin>. You'll be redirected to a login.
 
 To exercise the *real* login locally: `npm run hash-password`, paste the output into `.env.local` as `ADMIN_PASSWORD_HASH`, add a `SESSION_SECRET` (`openssl rand -base64 48`), and restart. The red banner disappears; that banner's absence is the signal that the real path is live.
 
+### Previewing the seasonal backdrop
+
+The guest screens carry a faint seasonal particle layer — sakura in spring, green
+leaves in summer, momiji in autumn, snow in winter. It follows the calendar, so
+three of the four are normally invisible.
+
+Add `?season=` to any guest URL to preview one, on a local server or the live
+site, with no redeploy:
+
+```
+/?season=winter      /?season=spring    /?season=autumn
+/?season=summer      /?season=auto      (auto = follow the calendar)
+```
+
+The choice sticks as you move around the app and lasts until the browser tab is
+closed. `?season=auto` clears it. To pin one motif permanently instead, edit
+`SEASON_OVERRIDE` in `src/lib/season.ts`.
+
+The layer is switched off entirely for anyone whose device asks for reduced
+motion, and never appears on `/admin`.
+
 ### Production build
 
 ```bash
