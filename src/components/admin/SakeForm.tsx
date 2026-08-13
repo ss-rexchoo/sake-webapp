@@ -70,11 +70,14 @@ function Section({
 // minimum touch target (`HIT_SIZE` in TasteCompass). The `Input` primitive's
 // h-8 default is a desktop density this tool never runs at.
 const inputClass = "h-11";
-// `text-base md:text-sm` rather than a fixed 14px: iOS Safari zooms the page
-// when a form control under 16px takes focus, which is why the `Input`
-// primitive is written this way. The select has to match it.
+// `text-base` with a `pointer:fine` step down, not a fixed 14px: iOS Safari
+// zooms the page when a form control under 16px takes focus. Keyed off pointer
+// type rather than `md:` (viewport width) because an iPad in portrait is
+// 768–834px — it would cross the `md` breakpoint and zoom on every tap, on
+// exactly the device most likely to be behind the bar. Matches the `Input`
+// primitive.
 const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-2.5 text-base text-cream focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:text-sm";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-2.5 text-base text-cream focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none [@media(pointer:fine)]:text-sm";
 
 export function SakeForm({
   sake,

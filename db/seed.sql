@@ -7,12 +7,12 @@
 -- `regions` has a natural text primary key, so a re-run is a plain no-op per row
 -- and a region added later is not clobbered.
 insert into regions (id, name, name_jp, description, map_cx, map_cy, map_rx, map_ry, map_rotation) values
-  ('hokkaido', 'Hokkaido', '北海道',     'Cold winters and mountain snowmelt make for clean, refreshing sake.', 195,  55, 50, 34, -6),
-  ('tohoku',   'Tohoku',   '東北',       'Heavy snowfall country, famous for fruity, award-winning sake.',      168, 142, 56, 50, -4),
-  ('chubu',    'Chubu',    '中部・新潟', 'Home of Niigata, birthplace of clean, dry tanrei-karakuchi sake.',    138, 236, 58, 46, -8),
-  ('kansai',   'Kansai',   '関西',       'Historic brewing heartland around Kyoto and Hyogo.',                  116, 322, 52, 44, -5),
-  ('chugoku',  'Chugoku',  '中国',       'Home of Dassai and the polished, fruity ginjo style.',                 90, 400, 48, 38, -6),
-  ('kyushu',   'Kyushu',   '九州',       'A warmer climate producing bold, umami-rich sake.',                    68, 466, 46, 34, -4)
+  ('hokkaido', 'Hokkaido', '北海道',     'Cold winters and mountain snowmelt make for clean, refreshing sake.', 208.4,  41.9, 50, 34, -6),
+  ('tohoku',   'Tohoku',   '東北',       'Heavy snowfall country, famous for fruity, award-winning sake.',      179.8, 114.7, 56, 50, -4),
+  ('chubu',    'Chubu',    '中部・新潟', 'Home of Niigata, birthplace of clean, dry tanrei-karakuchi sake.',    143.7, 164.9, 58, 46, -8),
+  ('kansai',   'Kansai',   '関西',       'Historic brewing heartland around Kyoto and Hyogo.',                  108.2, 193.7, 52, 44, -5),
+  ('chugoku',  'Chugoku',  '中国',       'Home of Dassai and the polished, fruity ginjo style.',                 70.9, 196.5, 48, 38, -6),
+  ('kyushu',   'Kyushu',   '九州',       'A warmer climate producing bold, umami-rich sake.',                    34.6, 230.2, 46, 34, -4)
 on conflict (id) do nothing;
 
 -- `sake.id` is a generated uuid, so there is no natural key to conflict on and

@@ -58,7 +58,10 @@ function Axis({
           onChange={(event) => onChange(clamp(Number(event.target.value) || 0))}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${name}-error` : undefined}
-          className="h-11 w-20 rounded-md border border-input bg-transparent px-2 text-right text-base text-cream tabular-nums focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:text-sm"
+          // See `SakeForm`'s `selectClass`: `pointer:fine`, not `md:`, so an
+          // iPad in portrait does not cross a width breakpoint into 14px and
+          // trigger iOS zoom-on-focus.
+          className="h-11 w-20 rounded-md border border-input bg-transparent px-2 text-right text-base text-cream tabular-nums focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none [@media(pointer:fine)]:text-sm"
         />
       </div>
 

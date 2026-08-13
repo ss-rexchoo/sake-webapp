@@ -53,7 +53,11 @@ export function SakeHero({ sake }: { sake: Sake }) {
         <BottleArt sake={sake} />
       )}
 
-      <h1 className="mt-3 font-display text-[26px] leading-tight font-bold">
+      {/* 26 → 29px at `md`, the app's one type step up (~1.13, the same ratio
+          the page header and landing hero take). `FridgeBadge` is sized against
+          this number — it holds a ~2.76x ratio to the name's cap height — so if
+          this changes, check that file too. */}
+      <h1 className="mt-3 font-display text-[26px] leading-tight font-bold md:text-[29px]">
         {sake.name_en}
       </h1>
 

@@ -58,11 +58,7 @@ export default async function SakeDetailPage({
   }
 
   return (
-    // The sake name takes the same one-step type bump as `PageHeader` and the
-    // landing hero at `md`. It is applied from here, on the page's only `h1`,
-    // rather than inside `SakeHero` because that file is mid-rewrite for the
-    // bottle illustration — fold this back into the `h1` there once that lands.
-    <main className="flex flex-1 flex-col md:[&_h1]:text-[29px]">
+    <main className="flex flex-1 flex-col">
       <BackButton />
 
       <SakeHero sake={sake} />

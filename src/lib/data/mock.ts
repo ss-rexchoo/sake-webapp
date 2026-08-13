@@ -19,6 +19,24 @@ import { matchesSearchQuery, normalizeSearchQuery } from "./search";
 /** Fixed so server and client render identical values (no hydration drift). */
 const SEEDED_AT = "2026-01-01T00:00:00.000Z";
 
+/**
+ * ── On the `map_*` columns ──────────────────────────────────────────────────
+ * `map_cx`/`map_cy` are the **label anchor** — where a region's name sits on the
+ * map — and nothing else. They are honoured only if the word actually fits
+ * inside that region's coastline at that point; otherwise `JapanMap` falls back
+ * to the authored anchor in `src/components/map/shapes.ts`.
+ *
+ * These values were re-seeded when the map moved from rotated ellipses to
+ * hand-authored coastline paths. The originals were ellipse centres in a
+ * different coordinate space — all six sat outside the new geometry, so every
+ * one silently failed the fit test and the column had stopped doing anything.
+ * If you change the map's projection again, re-seed these from `shapes.ts` or
+ * staff lose the ability to nudge a label.
+ *
+ * `map_rx`, `map_ry` and `map_rotation` are **vestigial** — they described the
+ * old ellipses and nothing reads them now. Kept because they are in the plan
+ * §10 schema and dropping a column is a migration; do not wire them back up.
+ */
 const REGION_SEED: readonly Region[] = [
   {
     id: "hokkaido",
@@ -26,8 +44,8 @@ const REGION_SEED: readonly Region[] = [
     name_jp: "北海道",
     description:
       "Cold winters and mountain snowmelt make for clean, refreshing sake.",
-    map_cx: 195,
-    map_cy: 55,
+    map_cx: 208.4,
+    map_cy: 41.9,
     map_rx: 50,
     map_ry: 34,
     map_rotation: -6,
@@ -38,8 +56,8 @@ const REGION_SEED: readonly Region[] = [
     name_jp: "東北",
     description:
       "Heavy snowfall country, famous for fruity, award-winning sake.",
-    map_cx: 168,
-    map_cy: 142,
+    map_cx: 179.8,
+    map_cy: 114.7,
     map_rx: 56,
     map_ry: 50,
     map_rotation: -4,
@@ -50,8 +68,8 @@ const REGION_SEED: readonly Region[] = [
     name_jp: "中部・新潟",
     description:
       "Home of Niigata, birthplace of clean, dry tanrei-karakuchi sake.",
-    map_cx: 138,
-    map_cy: 236,
+    map_cx: 143.7,
+    map_cy: 164.9,
     map_rx: 58,
     map_ry: 46,
     map_rotation: -8,
@@ -61,8 +79,8 @@ const REGION_SEED: readonly Region[] = [
     name: "Kansai",
     name_jp: "関西",
     description: "Historic brewing heartland around Kyoto and Hyogo.",
-    map_cx: 116,
-    map_cy: 322,
+    map_cx: 108.2,
+    map_cy: 193.7,
     map_rx: 52,
     map_ry: 44,
     map_rotation: -5,
@@ -72,8 +90,8 @@ const REGION_SEED: readonly Region[] = [
     name: "Chugoku",
     name_jp: "中国",
     description: "Home of Dassai and the polished, fruity ginjo style.",
-    map_cx: 90,
-    map_cy: 400,
+    map_cx: 70.9,
+    map_cy: 196.5,
     map_rx: 48,
     map_ry: 38,
     map_rotation: -6,
@@ -83,8 +101,8 @@ const REGION_SEED: readonly Region[] = [
     name: "Kyushu",
     name_jp: "九州",
     description: "A warmer climate producing bold, umami-rich sake.",
-    map_cx: 68,
-    map_cy: 466,
+    map_cx: 34.6,
+    map_cy: 230.2,
     map_rx: 46,
     map_ry: 34,
     map_rotation: -4,
