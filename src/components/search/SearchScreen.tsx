@@ -5,7 +5,11 @@ import Link from "next/link";
 import { Search, Wine, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
-import { ResultBadge, ResultCard } from "@/components/ResultCard";
+import {
+  FridgeSlotNote,
+  ResultBadge,
+  ResultCard,
+} from "@/components/ResultCard";
 import { filterRows, type SearchRow } from "@/components/search/match";
 import { Input } from "@/components/ui/input";
 import { EASE_SOFT, HOVER_DURATION, STAGGER_STEP } from "@/lib/motion";
@@ -277,41 +281,39 @@ export function SearchScreen({
       {matchCount === 0 ? (
         <EmptyState query={trimmed} catalogueEmpty={rows.length === 0} />
       ) : (
-        /*
-         * One column on a phone, two from `md`, three from `lg`. A grid rather
-         * than a wrapping flex row so every card in a row shares the tallest
-         * one's height — an out-of-stock row carries an extra line, and ragged
-         * card bottoms across three columns read as a rendering fault.
-         *
-         * `grid-cols-1` is exactly what `flex flex-col` was at phone widths:
-         * one full-width track, the same 12px gap, rows sized by content.
-         */
-        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+        <>
+          {/* Left-aligned under the field, matching this screen's left-aligned
+              header. Inside the results branch, not above it: the empty state
+              has no `#` on screen to explain. */}
+          <FridgeSlotNote className="mb-2.5" />
+          {/*
+           * One column on a phone, two from `md`, three from `lg`. A grid rather
+           * than a wrapping flex row so every card in a row shares the tallest
+           * one's height — an out-of-stock row carries an extra line, and ragged
+           * card bottoms across three columns read as a rendering fault.
+           *
+           * `grid-cols-1` is exactly what `flex flex-col` was at phone widths:
+           * one full-width track, the same 12px gap, rows sized by content.
+           */}
+          <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {results.map((row, index) => (
             <li key={row.id} className="flex">
               <ResultCard
                 id={row.id}
                 name={row.name}
-                sub={
-                  <>
-                    {[row.prefecture, row.category].filter(Boolean).join(" · ")}
-                    {row.inStock ? null : (
-                      // Shown, not hidden: a guest typing a name they saw on the
-                      // menu deserves "we have it, it's out" rather than a
-                      // no-results screen that reads as a broken search. The row
-                      // still links through — the detail page carries the bottle's
-                      // full story — but nothing here implies it is in the fridge.
-                      // `text-muted`, the app's one secondary-text token, and
-                      // the same colour `FridgeBadge` gives its out-of-stock
-                      // label. A cream tint at this luminance is a near-miss on
-                      // --muted in a different hue, sitting 4px under a --muted
-                      // line — two greys that read as one mistake.
-                      <span className="mt-1 block text-[11px] text-muted">
-                        Not in the fridge tonight
-                      </span>
-                    )}
-                  </>
-                }
+                sub={[row.prefecture, row.category].filter(Boolean).join(" · ")}
+                fridgeNumber={row.fridgeNumber}
+                price={row.price}
+                // Shown, not hidden: a guest typing a name they saw on the menu
+                // deserves "we have it, it's out" rather than a no-results
+                // screen that reads as a broken search. The row still links
+                // through — the detail page carries the bottle's full story —
+                // but nothing here implies it is in the fridge.
+                //
+                // The line itself now lives in `ResultCard` (it used to be
+                // smuggled in through `sub`), unchanged: same 11px `--muted`
+                // wording, same position under the sub line.
+                stock={row.inStock ? "in-stock" : "out-of-stock"}
                 badge={
                   <ResultBadge tone="muted">
                     <Wine
@@ -345,6 +347,7 @@ export function SearchScreen({
             </li>
           ))}
         </ul>
+        </>
       )}
     </>
   );

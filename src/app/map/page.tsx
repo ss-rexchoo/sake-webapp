@@ -35,6 +35,11 @@ export default async function MapPage() {
         id: sake.id,
         name: sake.name_en,
         sub: [sake.prefecture, sake.category].filter(Boolean).join(" · "),
+        // Same reason as the results screen: a browse list that names a bottle
+        // without saying where it is or what it costs makes the detail page a
+        // mandatory round trip rather than a confirmation.
+        fridgeNumber: sake.fridge_number,
+        price: sake.price,
       })),
   }));
 

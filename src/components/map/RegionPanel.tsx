@@ -3,7 +3,11 @@
 import { Wine } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
-import { ResultBadge, ResultCard } from "@/components/ResultCard";
+import {
+  FridgeSlotNote,
+  ResultBadge,
+  ResultCard,
+} from "@/components/ResultCard";
 import type { MapRegion } from "@/components/map/types";
 import { EASE_SOFT, ITEM_DURATION, ITEM_RISE, PANEL_EXIT } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -143,18 +147,36 @@ export function RegionPanel({
             ) : null}
 
             {region.sake.length > 0 ? (
-              // Paired up at `md` only. There the panel spans the full 768px
-              // column under a map that has been held to 464px, and a single
-              // 720px-wide card for "Dassai 45 · Yamaguchi · Junmai Daiginjo"
-              // is mostly empty rule. At `lg` the panel is a ~565px column
-              // beside the map, which is one card wide again.
-              <ul className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-1 lg:gap-3">
+              <>
+              {/* The panel is the one place a list can be a SINGLE row, where
+                  non-sequential slot numbers never accumulate to disprove the
+                  "rank" reading of `#`. It needs the legend most. */}
+              <FridgeSlotNote className="mt-3.5" />
+              {/* Paired up at `md` only. There the panel spans the full 768px
+                  column under a map that has been held to 464px, and a single
+                  720px-wide card for "Dassai 45 · Yamaguchi · Junmai Daiginjo"
+                  is mostly empty rule. At `lg` the panel is a ~565px column
+                  beside the map, which is one card wide again.
+
+                  `mt-2.5`, not the `mt-4` this list used to carry: the legend
+                  above now owns the gap to the description, and the list sits
+                  under its own caption. 16 + 4 unchanged in total. */}
+              <ul className="mt-2.5 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-1 lg:gap-3">
                 {region.sake.map((sake, index) => (
                   <li key={sake.id} className="flex">
                     <ResultCard
                       id={sake.id}
                       name={sake.name}
                       sub={sake.sub}
+                      fridgeNumber={sake.fridgeNumber}
+                      price={sake.price}
+                      // Stated rather than left undefined even though the page
+                      // filters out-of-stock bottles out before they get here:
+                      // this list has an availability story (it is a browse
+                      // list, like search), it simply always has the same
+                      // answer. If the filter is ever relaxed, the card already
+                      // knows what to say.
+                      stock="in-stock"
                       // No pairing tags. Those belong to the results screen,
                       // where they help justify a match; this is browsing, same
                       // as search, and the search list carries none either.
@@ -184,6 +206,7 @@ export function RegionPanel({
                   </li>
                 ))}
               </ul>
+              </>
             ) : (
               /*
                * The honest empty state — the same principle as the

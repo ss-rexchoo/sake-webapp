@@ -4,6 +4,7 @@ import { ArrowUp, Plus } from "lucide-react";
 import { StockToggle } from "@/components/admin/StockToggle";
 import { PageHeader } from "@/components/PageHeader";
 import { repo } from "@/lib/data";
+import { formatPrice } from "@/lib/format";
 import type { Sake } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -39,18 +40,6 @@ import { cn } from "@/lib/utils";
  * 390 and 768 this screen renders zero differing pixels against the version
  * before the table existed.
  */
-/**
- * `RM 145` — the same MYR formatting the guest-facing `FridgeBadge` uses, so a
- * price reads identically on both sides of the counter. Duplicated rather than
- * imported because the guest one is a private helper in a component this piece
- * does not own; if a third caller appears, lift it into `src/lib`.
- */
-function formatPrice(price: number): string {
-  return `RM ${new Intl.NumberFormat("en-MY", {
-    maximumFractionDigits: 2,
-  }).format(price)}`;
-}
-
 /**
  * The gold slot badge, shared by both presentations so the number a staff member
  * matches against the fridge door looks the same on a phone and on a laptop.

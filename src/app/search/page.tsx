@@ -50,6 +50,8 @@ export default async function SearchPage({
       brewery: sake.brewery,
       prefecture: sake.prefecture,
       category: sake.category,
+      fridgeNumber: sake.fridge_number,
+      price: sake.price,
       inStock: sake.in_stock,
     }));
 

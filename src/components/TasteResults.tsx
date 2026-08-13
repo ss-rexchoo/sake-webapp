@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 
 import { Kicker } from "@/components/Kicker";
 import { PageHeader } from "@/components/PageHeader";
-import { MatchBadge, ResultCard } from "@/components/ResultCard";
+import { FridgeSlotNote, MatchBadge, ResultCard } from "@/components/ResultCard";
 import { EASE_SOFT, HOVER_DURATION } from "@/lib/motion";
 
 const MotionLink = motion.create(Link);
@@ -16,6 +16,12 @@ export interface TasteMatch {
   name: string;
   sub: string;
   tags: string[];
+  /** Slot the guest walks to. Every row here is in stock — `topMatches` filters. */
+  fridgeNumber: number;
+  /** MYR. Null rows simply omit the price. */
+  price: number | null;
+  /** One line from `matchReason`, computed on the server. */
+  reason: string;
   /** 0–100, already floored at 1 by the caller. */
   score: number;
 }
@@ -54,7 +60,11 @@ export function TasteResults({
          * The three cards are otherwise unchanged and still carry their real
          * percentages. The caveat is on the confidence, not on the answer.
          */
-        <header className="mt-[2.875rem] mb-[1.375rem] text-center">
+        // `mb-1.5`, not the shared header's 22px: `FridgeSlotNote` sits
+        // directly below and carries the gap to the list instead. The caption
+        // explains a glyph in the header's own sentence — it belongs to the
+        // header, not to the first card.
+        <header className="mt-[2.875rem] mb-1.5 text-center">
           <span
             aria-hidden="true"
             className="mx-auto mb-3.5 block h-px w-10 bg-gold/45"
@@ -69,6 +79,9 @@ export function TasteResults({
         </header>
       ) : (
         <PageHeader
+          // Same as the low-confidence header above — the note below takes over
+          // the gap to the list.
+          className="mb-1.5"
           align="center"
           kicker="Your matches"
           title={
@@ -79,6 +92,11 @@ export function TasteResults({
         />
       )}
 
+      {/* Centred, to sit with the header above it rather than as a stray line
+          over the first card — this screen's header is centred and the note is
+          the last thing said before the answers. */}
+      <FridgeSlotNote className="mb-3.5 text-center" />
+
       <ul className="flex flex-col gap-3">
         {matches.map((match, index) => (
           <li key={match.id} className="flex">
@@ -86,6 +104,12 @@ export function TasteResults({
               id={match.id}
               name={match.name}
               sub={match.sub}
+              // No `stock` prop: `topMatches` has already dropped everything
+              // out of stock, so an availability line here could only ever say
+              // "in stock" — which is what the whole screen already means.
+              fridgeNumber={match.fridgeNumber}
+              price={match.price}
+              reason={match.reason}
               tags={match.tags}
               badge={
                 <MatchBadge

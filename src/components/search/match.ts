@@ -23,9 +23,9 @@ import { matchesSearchQuery, normalizeSearchQuery } from "@/lib/data/search";
 
 /**
  * A catalogue row, flattened on the server. Deliberately not a `Sake`: the
- * client never needs `sweetness`, `description`, `price` or `food_pairing` to
- * draw this list, and a QR-loaded page should not ship what it will not paint.
- * Every field below is either matched against or rendered.
+ * client never needs `sweetness`, `description` or `food_pairing` to draw this
+ * list, and a QR-loaded page should not ship what it will not paint. Every
+ * field below is either matched against or rendered.
  */
 export interface SearchRow {
   id: string;
@@ -36,6 +36,11 @@ export interface SearchRow {
   brewery: string | null;
   prefecture: string | null;
   category: string | null;
+  /** Rendered on the card as `#27` — see `ResultCard`. Not searchable: §8 lists
+      name, brewery and prefecture, and a bare number is a poor query anyway. */
+  fridgeNumber: number;
+  /** MYR. Rendered beside the fridge number; null rows omit it. */
+  price: number | null;
   inStock: boolean;
 }
 

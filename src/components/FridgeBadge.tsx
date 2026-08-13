@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 
+import { formatPrice } from "@/lib/format";
 import { EASE_SOFT, ITEM_RISE } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -28,13 +29,6 @@ const BADGE_DELAY = 0.78;
  * which reads as the biggest element being the lightest.
  */
 const BADGE_DURATION = 0.5;
-
-/** `RM 175`. Fixed locale so server and client render the same string. */
-function formatPrice(price: number): string {
-  return `RM ${new Intl.NumberFormat("en-MY", {
-    maximumFractionDigits: 2,
-  }).format(price)}`;
-}
 
 export interface FridgeBadgeProps {
   fridgeNumber: number;

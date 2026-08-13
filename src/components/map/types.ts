@@ -33,6 +33,10 @@ export interface RegionSake {
   name: string;
   /** "Niigata · Junmai Ginjo" — prefecture lives here, not in the badge. */
   sub: string;
+  /** Rendered on the card as `#27` — see `ResultCard`. */
+  fridgeNumber: number;
+  /** MYR. Rendered beside the fridge number; null rows omit it. */
+  price: number | null;
 }
 
 export interface MapRegion {

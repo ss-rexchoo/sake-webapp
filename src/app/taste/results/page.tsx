@@ -6,7 +6,7 @@ import { RevealGate } from "@/components/RevealGate";
 import type { TasteMatch } from "@/components/TasteResults";
 import { TasteResults } from "@/components/TasteResults";
 import { repo } from "@/lib/data";
-import { isLowConfidence, topMatches } from "@/lib/recommend";
+import { isLowConfidence, matchReason, topMatches } from "@/lib/recommend";
 import { parseTastePoint, tasteQuery } from "@/lib/taste-params";
 
 /**
@@ -52,17 +52,28 @@ export default async function TasteResultsPage({
     );
   }
 
+  const lowConfidence = isLowConfidence(results);
+
   const matches: TasteMatch[] = results.map(({ sake, score }) => ({
     id: sake.id,
     name: sake.name_en,
     sub: [sake.prefecture, sake.category].filter(Boolean).join(" · "),
+    // The fridge number and price ride down with the row so a guest can choose
+    // between three bottles from this screen — §17's "one destination" is a
+    // number, and a list that withholds it makes the detail page mandatory
+    // rather than confirmatory. Both are already on the record; nothing extra
+    // is fetched or sent that the card does not paint.
+    fridgeNumber: sake.fridge_number,
+    price: sake.price,
+    // Computed here, on the server, next to the score it explains — the client
+    // never receives a taste point or a sake's axes, only the sentence.
+    reason: matchReason(point, sake, lowConfidence),
     tags: sake.food_pairing.slice(0, 2),
     // Floored at 1: `matchScore` bottoms out at 0 and can round to `-0` at the
     // far corner of the grid, and "-0% match" on a card is a visible bug.
     score: Math.max(1, score),
   }));
 
-  const lowConfidence = isLowConfidence(results);
   const query = tasteQuery(point);
 
   return (
