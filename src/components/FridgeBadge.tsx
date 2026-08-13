@@ -149,7 +149,7 @@ export function FridgeBadge({
             // quietly become false (52% and 2.48), which is the defect this
             // file exists to prevent. If the page's type scales, its conclusion
             // scales with it.
-            "relative w-60 rounded-[2rem] px-6 py-6 text-center md:w-[17rem]",
+            "relative w-60 rounded-[2rem] px-6 py-5 text-center md:w-[17rem]",
             inStock
               ? "bg-linear-160 from-gold-light to-gold text-ink"
               : "border border-cream/20 surface-8 text-cream",

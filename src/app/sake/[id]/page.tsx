@@ -64,7 +64,7 @@ export default async function SakeDetailPage({
       <SakeHero sake={sake} />
 
       <section aria-label="Taste profile">
-        <Kicker className="mb-2.5">How it tastes</Kicker>
+        <Kicker className="mb-2">How it tastes</Kicker>
         <AttributeBar
           leftLabel="Dry"
           rightLabel="Sweet"
@@ -73,8 +73,8 @@ export default async function SakeDetailPage({
         />
         {/* `mb-0` on the last bar: `main` is a flex column, so margins do not
             collapse — the bar's own `mb-4` would stack with the description's
-            `mt-5` and open a 36px gap here while every other section break on
-            the page is 20px. The page's rhythm has to be even for the break
+            `mt-4` and open a 32px gap here while every other section break on
+            the page is 16px. The page's rhythm has to be even for the break
             above the fridge badge to read as a break. */}
         <AttributeBar
           leftLabel="Light"
@@ -86,13 +86,13 @@ export default async function SakeDetailPage({
       </section>
 
       {sake.description ? (
-        <p className="mt-5 text-[13.5px] leading-relaxed text-cream/92">
+        <p className="mt-4 text-[13.5px] leading-relaxed text-cream/92">
           {sake.description}
         </p>
       ) : null}
 
       {sake.food_pairing.length > 0 ? (
-        <section aria-label="Food pairings" className="mt-5">
+        <section aria-label="Food pairings" className="mt-4">
           <Kicker className="mb-2">Pairs well with</Kicker>
           <div className="flex flex-wrap gap-1.5">
             {sake.food_pairing.map((pairing) => (
@@ -104,10 +104,17 @@ export default async function SakeDetailPage({
 
       {/* A deliberately large gap above the badge. It is the one break in the
           page's rhythm, and it is what makes the badge read as the conclusion
-          of everything above rather than as the next item in a list. 56px is
-          2.8x the 20px section rhythm above it — at 48px against an uneven
-          rhythm it read as merely the largest gap rather than as a break. */}
-      <section aria-label="Where to find it" className="mt-14 mb-2">
+          of everything above rather than as the next item in a list.
+
+          32px against the 16px section rhythm above it — still 2x, so the break
+          survives, but half what it was. The whole page was compressed by ~130px
+          because the badge sat below the fold on a real phone: every prior check
+          measured a 393x852 viewport, which is the DEVICE height, while Safari's
+          URL bar and toolbar leave about 712px. The most important element in
+          the app was off-screen on arrival and partly behind the browser chrome.
+          The ratio is what carries the break, not the absolute value — keep it
+          at 2x if this rhythm is ever retuned. */}
+      <section aria-label="Where to find it" className="mt-8 mb-0">
         <FridgeBadge
           fridgeNumber={sake.fridge_number}
           inStock={sake.in_stock}

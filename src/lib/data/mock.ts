@@ -124,8 +124,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Clean, dry, and crisp — the archetype of Niigata's tanrei-karakuchi style.",
     food_pairing: ["Sashimi", "Seafood", "Beginner friendly"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Denshu_Japanese_Sake_-_Flickr_-_odako1.jpg/500px-Denshu_Japanese_Sake_-_Flickr_-_odako1.jpg",
+    image_url: null,
     fridge_number: 27,
     price: 145,
     in_stock: true,
@@ -145,8 +144,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Soft and elegant, with gentle rice sweetness balanced by a dry finish.",
     food_pairing: ["Sushi", "Light appetizers"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Sake_bottle.JPG/500px-Sake_bottle.JPG",
+    image_url: null,
     fridge_number: 14,
     price: 130,
     in_stock: true,
@@ -165,8 +163,7 @@ const SAKE_SEED: readonly Sake[] = [
     aroma_intensity: null,
     description: "Lush and fruity, famously hard to find — a modern classic.",
     food_pairing: ["Cheese", "Fruit", "Special occasion"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ouka_kaiun.jpg/500px-Ouka_kaiun.jpg",
+    image_url: null,
     fridge_number: 31,
     price: 320,
     // The one seed bottle deliberately out of stock, so the out-of-stock paths
@@ -193,8 +190,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Polished to 18%, delicate and fragrant with a silky texture.",
     food_pairing: ["Delicate fish", "White meat"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Sake_Kyo-no-haru%2CTake-no-tuyu.JPG/500px-Sake_Kyo-no-haru%2CTake-no-tuyu.JPG",
+    image_url: null,
     fridge_number: 22,
     price: 285,
     in_stock: true,
@@ -213,8 +209,7 @@ const SAKE_SEED: readonly Sake[] = [
     aroma_intensity: null,
     description: "A traditional Nada-style sake, full-bodied with deep umami.",
     food_pairing: ["Grilled meat", "Umami dishes"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Sake_katsumasa.jpg/500px-Sake_katsumasa.jpg",
+    image_url: null,
     fridge_number: 5,
     price: 95,
     in_stock: true,
@@ -234,8 +229,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "A soft, approachable Fushimi-style sake, lovely served warm.",
     food_pairing: ["Everyday food", "Warm sake"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Nihonshu.jpg/500px-Nihonshu.jpg",
+    image_url: null,
     fridge_number: 11,
     price: 90,
     in_stock: true,
@@ -255,8 +249,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Bright and fruity, polished to 45% — approachable and aromatic.",
     food_pairing: ["Tempura", "Light dishes"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Lyon_7e_-_Rue_de_Bonald_-_Restaurant_Kuro_Goma%2C_bouteille_et_verre_de_Ninki_Ichi.jpg/500px-Lyon_7e_-_Rue_de_Bonald_-_Restaurant_Kuro_Goma%2C_bouteille_et_verre_de_Ninki_Ichi.jpg",
+    image_url: null,
     fridge_number: 8,
     price: 175,
     in_stock: true,
@@ -276,8 +269,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Soft Hiroshima water gives this sake a smooth, rounded body.",
     food_pairing: ["Grilled fish", "Oysters"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/JOH_8482_-_Kabuto.jpg/500px-JOH_8482_-_Kabuto.jpg",
+    image_url: null,
     fridge_number: 19,
     price: 115,
     in_stock: true,
@@ -297,8 +289,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Award-winning Saga sake with balanced sweetness and clean acidity.",
     food_pairing: ["Grilled dishes", "Vegetables"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Iwao_no_Izumi_250322.jpg/500px-Iwao_no_Izumi_250322.jpg",
+    image_url: null,
     fridge_number: 17,
     price: 190,
     in_stock: true,
@@ -318,8 +309,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Full-bodied and warming — built to stand up to hearty cooking.",
     food_pairing: ["Nabe hotpot", "Robust dishes"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Sagaminada_20250322_Lt1.jpg/500px-Sagaminada_20250322_Lt1.jpg",
+    image_url: null,
     fridge_number: 24,
     price: 105,
     in_stock: true,
@@ -339,8 +329,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Brewed with pristine Daisetsuzan snowmelt — clean and refreshing.",
     food_pairing: ["Crab", "Cold dishes"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/%E3%81%8A%E9%85%92_%2843414299132%29.jpg/500px-%E3%81%8A%E9%85%92_%2843414299132%29.jpg",
+    image_url: null,
     fridge_number: 33,
     price: 135,
     in_stock: true,
@@ -360,8 +349,7 @@ const SAKE_SEED: readonly Sake[] = [
     description:
       "Japan's northernmost brewery — light, gently sweet, easy drinking.",
     food_pairing: ["Light appetizers", "Aperitif"],
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/The_renowned_japanese_drink_%22Sake%22.JPG/500px-The_renowned_japanese_drink_%22Sake%22.JPG",
+    image_url: null,
     fridge_number: 29,
     price: 120,
     in_stock: true,

@@ -36,7 +36,7 @@ export function SakeHero({ sake }: { sake: Sake }) {
     .join(" · ");
 
   return (
-    <header className="mt-[2.875rem] mb-6 flex flex-col items-center text-center">
+    <header className="mt-8 mb-4 flex flex-col items-center text-center">
       {sake.image_url ? (
         <Image
           // `unoptimized` keeps this off the image optimizer, so a restaurant
@@ -47,7 +47,7 @@ export function SakeHero({ sake }: { sake: Sake }) {
           alt={`Bottle of ${sake.name_en}`}
           width={120}
           height={150}
-          className="h-[9.375rem] w-30 rounded-2xl border border-cream/15 surface-6 object-cover"
+          className="h-28 w-[5.6rem] rounded-2xl border border-cream/15 surface-6 object-cover"
         />
       ) : (
         <BottleArt sake={sake} />

@@ -16,11 +16,22 @@ import { cn } from "@/lib/utils";
  *
  * ── Why it stays quiet ──────────────────────────────────────────────────────
  * §4/§9 make the fridge number the most dominant element on this page, and gold
- * is spent once, on that badge. So there is no gold anywhere below: the glass is
- * cream at 9.5% alpha, the label paper at 15%, and the loudest mark in the whole
- * drawing is a hairline at 30% — all of it well under the 26px full-cream sake
- * name directly beneath, let alone under a 240px gold gradient carrying a 72px
- * numeral. The bottle is scene-setting, not signage.
+ * is spent almost entirely on that badge. The glass is cream at 9.5% alpha, the
+ * label paper at 15%, and the loudest mark in the drawing is a hairline at 30%
+ * — all of it well under the 26px full-cream sake name directly beneath, let
+ * alone under a 240px gold gradient carrying a 72px numeral. The bottle is
+ * scene-setting, not signage.
+ *
+ * The ONE exception is the foil capsule, which is `--gold` at 30%. This was an
+ * explicit design decision, not a drift: four treatments (no gold / gold
+ * hairline contour / gold capsule / both) were rendered side by side and judged
+ * against the real badge, and the capsule won. The reasoning worth keeping is
+ * that "gold is reserved" is a rule about MASS, not about hue — the capsule is
+ * ~4% of the drawing's area, sits at the top edge far from the badge, and is
+ * gold because foil is gold rather than to claim importance. A gold contour, by
+ * contrast, runs a gold line down the whole silhouette and does start competing.
+ * If gold ever needs to come back out, take the capsule to `--cream` at 0.14;
+ * do not put gold on the contour instead.
  *
  * Measured at 390x844: the drawing's ink mass (area weighted by contrast above
  * the page's indigo) is ~3,100, against ~7,500 for the sake name and ~271,000
@@ -399,7 +410,7 @@ export function BottleArt({ sake, className }: BottleArtProps) {
       role="presentation"
       focusable="false"
       viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-      className={cn("h-[9.375rem] w-18 shrink-0", className)}
+      className={cn("h-28 w-[4.03rem] shrink-0", className)}
     >
       <defs>
         <clipPath id={`${uid}-clip`}>
@@ -424,15 +435,30 @@ export function BottleArt({ sake, className }: BottleArtProps) {
       <path d={path} fill={GLASS_FILL} fillOpacity={GLASS_ALPHA} />
 
       <g clipPath={`url(#${uid}-clip)`}>
-        {/* Capsule over the neck. Slightly denser than the glass, because foil
-            is opaque and glass is not. */}
+        {/* Capsule over the neck — the one place this drawing spends gold.
+            Denser than the glass, because foil is opaque and glass is not.
+
+            Gold is otherwise reserved for the fridge badge (see the file header),
+            and that rule still holds: what it forbids is gold competing for
+            "this is the answer", which is a question of MASS, not of hue. The
+            capsule is ~4% of the drawing's area at the very top, far from the
+            badge, and it is gold for a physical reason rather than an emphatic
+            one — sake capsules are foil. It reads as material.
+
+            The alternatives were measured against the badge and rejected: a full
+            gold contour puts a gold line down the entire silhouette, which is
+            where the eye starts competing. Keep gold on the foil only.
+
+            0.30 rather than the glass's 0.095 because foil is the one genuinely
+            opaque part of a bottle; below ~0.22 it greys out and stops reading
+            as metal at 72px wide. */}
         <rect
           x={0}
           y={0}
           width={VIEW_W}
           height={shape.shoulderY * 0.42}
-          fill="var(--cream)"
-          fillOpacity={0.14}
+          fill="var(--gold)"
+          fillOpacity={0.3}
         />
 
         {/* Kubikake — the narrow ring high on the neck, below the capsule and
