@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 
-import { EASE_BREATH, EASE_SOFT, ITEM_RISE } from "@/lib/motion";
+import { EASE_SOFT, ITEM_RISE } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,9 +28,6 @@ const BADGE_DELAY = 0.78;
  * which reads as the biggest element being the lightest.
  */
 const BADGE_DURATION = 0.5;
-
-/** One breath. Slow enough to read as ambient rather than as a notification. */
-const PULSE_DURATION = 2.6;
 
 /** `RM 175`. Fixed locale so server and client render the same string. */
 function formatPrice(price: number): string {
@@ -64,7 +61,11 @@ export interface FridgeBadgeProps {
  *
  * Deliberately wider than the prototype's 150px. At 150px on a 390px screen the
  * badge is a footnote below the fold of attention; the plan calls it the most
- * important element on the page, so it takes ~2/3 of the reading column.
+ * important element on the page, so it takes ~2/3 of the reading column (69%
+ * on a phone; 59% at `md`, where the column outgrows the badge slightly even
+ * after the badge takes its own step up — see the note on the card below).
+ * The ratio that actually decides whether the number wins the page is the one
+ * against the name, and that holds at 2.77 / 2.76 across the whole range.
  *
  * ── Out of stock ────────────────────────────────────────────────────────────
  * The badge is a promise that a guest will walk to the fridge and find the
@@ -74,14 +75,32 @@ export interface FridgeBadgeProps {
  * is still what staff will reference, and an explicit vermillion notice says so
  * in words rather than leaving the guest to infer it from a colour change.
  *
- * ── Reduced motion ──────────────────────────────────────────────────────────
- * Two mechanisms, because one is not enough here. The badge's own breath is a
- * `scale`, which `MotionConfig reducedMotion="user"` (in `PageTransition`)
- * strips automatically. The glow is an `opacity` loop, which Motion does *not*
- * strip — so its layer also carries `motion-reduce:hidden`, a plain CSS media
- * query that removes it outright. Nothing here pulses for a guest who asked for
- * stillness, and neither mechanism branches on a hook, so SSR and client output
- * stay identical.
+ * ── Why nothing here loops ──────────────────────────────────────────────────
+ * Plan §9 asks for a "gently pulsing" badge and this deliberately does not
+ * pulse. The badge previously breathed on a 2.6s infinite loop — a 1.5% scale,
+ * plus a gold glow cycling opacity 0.4 → 0.8. Shown it in use, the user found
+ * it "a bit weird", and they were right for a reason worth writing down:
+ *
+ * An infinite loop never resolves, so after its first cycle it asks for
+ * attention without carrying new information. This badge does not need it. It
+ * already wins the page by measurement — the only gold, the only inverted
+ * surface, ~2/3 of the reading column, ~2.76x the sake name's cap height — and,
+ * decisively, it is the LAST thing to arrive, landing 0.26s after the attribute
+ * bars settle. That delay is what makes it read as the page's conclusion.
+ * Attention is earned by the entrance; a permanent pulse spends it again every
+ * 2.6 seconds for nothing.
+ *
+ * There is also a semantic mismatch: pulsing means alert, live, waiting. A
+ * fridge slot number is a static fact. Bottle #27 is not breathing. And this is
+ * a page a guest holds while walking to a fridge, where a throbbing element in
+ * peripheral vision is a small, constant irritation.
+ *
+ * The glow survives as a STATIC bloom, which gives the badge warmth without
+ * motion. Consequently reduced motion needs no special handling here at all —
+ * the only animation left is the entrance, and `MotionConfig reducedMotion="user"`
+ * in `PageTransition` neutralises that globally. If you ever reintroduce a loop,
+ * note that Motion strips animated `transform` but NOT animated `opacity`, so an
+ * opacity loop would need its own `motion-reduce:hidden`.
  */
 export function FridgeBadge({
   fridgeNumber,
@@ -110,19 +129,11 @@ export function FridgeBadge({
     >
       <div className="relative">
         {inStock ? (
-          <motion.span
+          // A static bloom, not a loop. Plain `span`, not `motion.span`: it no
+          // longer animates, so there is nothing for Motion to drive.
+          <span
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-3 rounded-[3rem] bg-gold/30 blur-2xl motion-reduce:hidden"
-            initial={{ opacity: 0.4, scale: 0.98 }}
-            animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.98, 1.04, 0.98] }}
-            transition={{
-              duration: PULSE_DURATION,
-              ease: EASE_BREATH,
-              repeat: Infinity,
-              // Starts once the badge has landed, so the first breath crosses a
-              // settled block rather than one still scaling in.
-              delay: BADGE_DELAY + BADGE_DURATION,
-            }}
+            className="pointer-events-none absolute -inset-3 rounded-[3rem] bg-gold/30 opacity-55 blur-2xl"
           />
         ) : null}
 
@@ -143,13 +154,6 @@ export function FridgeBadge({
               ? "bg-linear-160 from-gold-light to-gold text-ink"
               : "border border-cream/20 bg-cream/8 text-cream",
           )}
-          animate={inStock ? { scale: [1, 1.015, 1] } : undefined}
-          transition={{
-            duration: PULSE_DURATION,
-            ease: EASE_BREATH,
-            repeat: Infinity,
-            delay: BADGE_DELAY + BADGE_DURATION,
-          }}
         >
           <p
             className={cn(
