@@ -33,7 +33,7 @@ export function BackButton({ className }: { className?: string }) {
       whileTap={{ scale: 0.97 }}
       className={cn(
         "absolute top-0 left-0 z-10 inline-flex items-center gap-1.5",
-        "rounded-full border border-cream/20 bg-cream/8 py-[7px] pr-3 pl-2.5",
+        "rounded-full border border-cream/20 surface-8 py-[7px] pr-3 pl-2.5",
         "text-[13px] text-cream transition-colors duration-200",
         "hover:bg-cream/16 active:bg-cream/16",
         // No `ring-offset` — see the note on the landing method card.

@@ -44,7 +44,7 @@ export default async function TasteResultsPage({
         />
         <Link
           href="/"
-          className="mx-auto rounded-full border border-cream/20 bg-cream/8 px-4 py-2 text-[13px] text-cream transition-colors duration-200 hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+          className="mx-auto rounded-full border border-cream/20 surface-8 px-4 py-2 text-[13px] text-cream transition-colors duration-200 hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
         >
           Back to start
         </Link>

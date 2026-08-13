@@ -152,7 +152,7 @@ export function FridgeBadge({
             "relative w-60 rounded-[2rem] px-6 py-6 text-center md:w-[17rem]",
             inStock
               ? "bg-linear-160 from-gold-light to-gold text-ink"
-              : "border border-cream/20 bg-cream/8 text-cream",
+              : "border border-cream/20 surface-8 text-cream",
           )}
         >
           <p

@@ -99,6 +99,41 @@
 /* Font utilities are declared with @utility rather than as `--font-*` theme
    keys, because a theme key of the same name as the CSS variable it reads
    (`--font-display: var(--font-display)`) resolves to a cycle. */
+/* Opaque content surfaces.
+ *
+ * Every card in the guest journey used to be `bg-cream/N` — a translucent tint
+ * over the page. That reads fine on its own, but `SeasonalAmbience` paints a
+ * fixed particle canvas behind the whole app, and a translucent card is a
+ * WINDOW: petals drift *inside* result cards and sake descriptions rather than
+ * behind them. That is what capped particle opacity at ~0.08 and made the
+ * backdrop invisible on a phone.
+ *
+ * These composite the same tint against `--bg` up front, so the rendered colour
+ * is what `bg-cream/N` over the background always looked like, but the surface
+ * is opaque and nothing shows through. That is what buys the backdrop its
+ * opacity budget.
+ *
+ * Slight caveat, deliberate: the page wash is a radial gradient (`--bg` →
+ * `--bg2`), so a card's translucent appearance varied a little with its position
+ * on screen. These flatten to the `--bg` end. The difference is well under a
+ * perceptible step and the consistency is worth more than the variation.
+ *
+ * `TasteCompass` solves the same problem differently — an opaque `bg-bg` plus a
+ * gradient image on top — because it needs a gradient, not a flat tint.
+ */
+@utility surface-6 {
+  background-color: color-mix(in srgb, var(--cream) 6%, var(--bg));
+}
+@utility surface-8 {
+  background-color: color-mix(in srgb, var(--cream) 8%, var(--bg));
+}
+@utility surface-12 {
+  background-color: color-mix(in srgb, var(--cream) 12%, var(--bg));
+}
+@utility surface-14 {
+  background-color: color-mix(in srgb, var(--cream) 14%, var(--bg));
+}
+
 @utility font-display {
   font-family: var(--font-display);
 }

@@ -47,7 +47,7 @@ export function SakeHero({ sake }: { sake: Sake }) {
           alt={`Bottle of ${sake.name_en}`}
           width={120}
           height={150}
-          className="h-[9.375rem] w-30 rounded-2xl border border-cream/15 bg-cream/6 object-cover"
+          className="h-[9.375rem] w-30 rounded-2xl border border-cream/15 surface-6 object-cover"
         />
       ) : (
         <BottleArt sake={sake} />

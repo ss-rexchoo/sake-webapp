@@ -109,7 +109,7 @@ export function AttributeBar({
       <div
         role="img"
         aria-label={`${leftLabel} to ${rightLabel}: ${descriptor}`}
-        className="relative h-1.5 rounded-full bg-cream/12"
+        className="relative h-1.5 rounded-full surface-12"
       >
         {/* The carriage is unclipped — the 14px marker overhangs the 6px track. */}
         <motion.div

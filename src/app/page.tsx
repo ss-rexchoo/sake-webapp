@@ -52,7 +52,7 @@ const METHODS: Method[] = [
     title: "Search sake",
     sub: "Know the name? Look it up directly",
     icon: Search,
-    chip: "bg-cream/14 text-cream",
+    chip: "surface-14 text-cream",
   },
 ];
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
               // No `ring-offset`: the offset paints a solid --bg band, but the
               // page behind is a radial gradient nearer --bg2 at the top, so the
               // band reads as a mismatched halo. A 2px gold ring is plenty.
-              className="flex w-full items-center gap-3.5 rounded-lg border border-cream/14 bg-cream/6 p-4 text-left transition-colors duration-200 hover:bg-cream/12 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+              className="flex w-full items-center gap-3.5 rounded-lg border border-cream/14 surface-6 p-4 text-left transition-colors duration-200 hover:bg-cream/12 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
             >
               <span
                 className={`flex size-10 shrink-0 items-center justify-center rounded-[10px] ${chip}`}

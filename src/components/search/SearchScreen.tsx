@@ -139,7 +139,7 @@ export function SearchScreen({
             // radius (`rounded-md` = 0.7 x --radius = 11.2px), cream text, muted
             // placeholder, gold border on focus and no ring — the border *is*
             // the focus mark here, so a second gold halo would double it.
-            "h-12 rounded-md border-cream/20 bg-cream/8 px-3.5 pr-11 text-cream " +
+            "h-12 rounded-md border-cream/20 surface-8 px-3.5 pr-11 text-cream " +
             "placeholder:text-muted " +
             // 200ms, not shadcn's unqualified `transition-colors` (150ms): the
             // border warming to gold on focus runs on the same clock as every
@@ -326,7 +326,7 @@ function EmptyStateLink({
       whileHover={{ y: -1, transition: { duration: HOVER_DURATION, ease: EASE_SOFT } }}
       whileTap={{ scale: 0.97 }}
       className={
-        "inline-flex items-center rounded-full border border-cream/20 bg-cream/8 " +
+        "inline-flex items-center rounded-full border border-cream/20 surface-8 " +
         "px-4 py-2 text-[13px] text-cream transition-colors duration-200 " +
         "hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
       }

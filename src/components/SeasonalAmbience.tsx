@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import {
+  particleCountFor,
   resolveSeason,
   SEASON_MOTIFS,
   type MotifShape,
@@ -307,7 +308,19 @@ export function SeasonalAmbience() {
     // mounted, so there is no loop and no element to pay for.
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    const sync = () => setMotif(reduced.matches ? null : SEASON_MOTIFS[resolveSeason()]);
+    // Reduced motion is checked FIRST and outranks everything `resolveSeason`
+    // knows about, including an explicit `?season=` in the URL. A preview
+    // parameter chooses *which* motif; it never argues about whether there is
+    // one. Someone who asked for stillness gets stillness from any link.
+    //
+    // This effect is keyed on `isAdmin` only, so it does not re-run on guest →
+    // guest navigation. That is what makes `?season=` sticky within a session
+    // without any extra work: the motif simply stays in state. This component
+    // mounts once in the root layout and is never remounted by routing.
+    // `sessionStorage` (see `resolveSeason`) covers the other case — a reload,
+    // or a deep link into a later screen without the parameter.
+    const sync = () =>
+      setMotif(reduced.matches ? null : SEASON_MOTIFS[resolveSeason()]);
 
     sync();
     reduced.addEventListener("change", sync);
@@ -351,16 +364,34 @@ export function SeasonalAmbience() {
       // compound.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+      // Density follows viewport AREA, not the viewport count — see
+      // `particleCountFor`. Recomputed here rather than once at mount so a
+      // rotation or a dragged desktop window lands at the right density too.
+      const target = particleCountFor(motif, width, height);
+
       if (particles.length === 0) {
-        particles = Array.from({ length: motif.count }, () =>
+        particles = Array.from({ length: target }, () =>
           createParticle(motif, colors, width, height, true),
         );
-      } else {
-        for (const p of particles) {
-          p.baseX *= scaleX;
-          p.y *= scaleY;
-        }
+        return;
       }
+
+      for (const p of particles) {
+        p.baseX *= scaleX;
+        p.y *= scaleY;
+      }
+
+      // Grown viewport: new particles enter from ABOVE (`seeded: false`) rather
+      // than being scattered across the screen. Scattering is right at mount,
+      // when the whole field arrives at once behind a 2.2s fade; here it would
+      // be petals blinking into existence mid-air next to ones already
+      // falling. Entering from above costs a slow fill nobody is watching for.
+      while (particles.length < target) {
+        particles.push(createParticle(motif, colors, width, height, false));
+      }
+      // Shrunk viewport: drop from the tail. No fade-out state machine for a
+      // layer this faint, on an event this rare.
+      if (particles.length > target) particles.length = target;
     };
 
     const step = (dt: number) => {
@@ -437,18 +468,33 @@ export function SeasonalAmbience() {
       else start();
     };
 
+    // Debounced, because `resize` now does real work: it reallocates the canvas
+    // backing store AND recomputes the particle count. A dragged desktop window
+    // fires this every frame, and reallocating a 2880x1800 backing store 60
+    // times a second is a stall you can feel. 150ms is under the ~200ms that
+    // reads as lag and long enough to collapse a whole drag into one pass.
+    //
+    // It also happens to fix `orientationchange`, which on several browsers
+    // fires BEFORE `innerWidth`/`innerHeight` have flipped — the old direct
+    // binding could measure the pre-rotation viewport.
+    let resizeTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    };
+
     resize();
     start();
 
-
-    window.addEventListener("resize", resize);
-    window.addEventListener("orientationchange", resize);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       stop();
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("orientationchange", resize);
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [motif, isAdmin]);

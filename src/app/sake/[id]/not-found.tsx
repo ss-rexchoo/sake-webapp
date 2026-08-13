@@ -25,7 +25,7 @@ export default function SakeNotFound() {
         className="mb-7"
       />
 
-      <span className="mb-7 flex size-16 items-center justify-center rounded-full border border-cream/20 bg-cream/8">
+      <span className="mb-7 flex size-16 items-center justify-center rounded-full border border-cream/20 surface-8">
         <Wine aria-hidden="true" className="size-7 text-muted" />
       </span>
 
@@ -38,7 +38,7 @@ export default function SakeNotFound() {
         </Link>
         <Link
           href="/"
-          className="rounded-full border border-cream/20 bg-cream/8 px-4 py-2 text-[13px] text-cream transition-colors duration-200 hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+          className="rounded-full border border-cream/20 surface-8 px-4 py-2 text-[13px] text-cream transition-colors duration-200 hover:bg-cream/16 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
         >
           Back to start
         </Link>

@@ -138,7 +138,7 @@ export function ResultCard({
       }}
       whileTap={{ scale: 0.985 }}
       className={cn(
-        "flex items-center gap-3.5 rounded-lg border border-cream/14 bg-cream/6 p-3.5",
+        "flex items-center gap-3.5 rounded-lg border border-cream/14 surface-6 p-3.5",
         "transition-colors duration-200 hover:bg-cream/12",
         // No `ring-offset` — it would paint a solid --bg band over the page's
         // radial gradient. See the landing card for the full note.
