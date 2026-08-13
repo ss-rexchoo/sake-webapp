@@ -2,17 +2,28 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /**
-   * Produces `.next/standalone` — a self-contained server plus only the
-   * `node_modules` the build actually traced — so the container image can be a
-   * few hundred MB instead of shipping the whole dependency tree. See
-   * `Dockerfile`.
+   * `standalone` produces `.next/standalone` — a self-contained server plus only
+   * the `node_modules` the build actually traced — so the ECS container image is
+   * a few hundred MB instead of the whole dependency tree. See `Dockerfile`.
    *
-   * This is purely additive: `next build` writes the standalone directory *after*
-   * the normal build and changes nothing about `.next/server` or the manifests,
-   * so the Vercel prototype deploy is unaffected. Vercel's builder ignores the
-   * extra directory (it costs a little build time and nothing else).
+   * ── Why this is conditional ─────────────────────────────────────────────────
+   * It was originally set unconditionally, on the reasoning that standalone is
+   * purely additive and Vercel would ignore the extra directory. That was wrong,
+   * and it broke the first Vercel deploy:
+   *
+   *   Error: ENOENT: no such file or directory, open
+   *   '/vercel/path0/.next/next-server.js.nft.json'
+   *
+   * Vercel's builder does not consume `.next/standalone`. It reads the
+   * node-file-trace manifests (`*.nft.json`) that the DEFAULT output writes, and
+   * standalone mode consumes those into its own bundle instead of leaving them
+   * behind — so Vercel looks for a file that is no longer there.
+   *
+   * `VERCEL` is set by Vercel on every build, so this yields the default output
+   * there and standalone everywhere else, including the Docker build. Both deploy
+   * targets get what they need and neither needs a special build command.
    */
-  output: "standalone",
+  output: process.env.VERCEL ? undefined : "standalone",
 
   /**
    * Security headers.
