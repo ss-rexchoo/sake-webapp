@@ -1,0 +1,44 @@
+# Reinstalled from the lockfile in the deps stage — copying the host's copy in
+# would be slower and could carry platform-specific binaries.
+node_modules
+.next
+out
+build
+
+# Secrets must never enter an image layer. Runtime configuration comes from the
+# ECS task definition and Secrets Manager.
+.env
+.env.*
+!.env.local.example
+
+.git
+.gitignore
+.github
+
+# Docs, prototype and agent briefs — nothing the server runs.
+*.md
+!db/*.md
+sake-discovery-app.jsx
+designer.md
+developer.md
+.claude
+AGENTS.md
+CLAUDE.md
+
+# Editor / OS noise
+.DS_Store
+.vscode
+.idea
+*.log
+npm-debug.log*
+
+# Build artefacts that would only stale the image
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Vercel-only; ECS never reads it.
+vercel.json
+.vercel
+
+Dockerfile
+.dockerignore

@@ -1,0 +1,191 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — plan v2 §4.
+   This app is dark-only. There is no light theme and no prefers-color-scheme
+   switch: the single palette below is the whole system.
+   --------------------------------------------------------------------------- */
+:root {
+  /* Brand palette */
+  --bg: #16233d;
+  --bg2: #1d3155;
+  --cream: #f4ecd8;
+  --ink: #241f1a;
+  --vermillion: #c0392b;
+  --vermillion-dark: #8f2a1f;
+  /* Light vermillion tint, mirroring the --gold / --gold-light pair. Used for
+     icons and marks sitting on a vermillion-tinted surface, where the base
+     vermillion has too little contrast to read. */
+  --vermillion-light: #e9b7ad;
+  --gold: #cfa752;
+  --gold-light: #e9d29a;
+  --muted: #9aa7bd;
+
+  /* Font stacks. The --font-shippori / --font-zen-kaku vars are injected by
+     next/font in src/app/layout.tsx. */
+  --font-display: var(--font-shippori), "Hiragino Mincho ProN", Georgia, serif;
+  --font-body: var(--font-zen-kaku), "Hiragino Kaku Gothic ProN", system-ui,
+    -apple-system, sans-serif;
+
+  /* shadcn/ui semantic layer, remapped onto the brand palette above so the
+     primitives inherit the design system instead of the neutral default. */
+  --background: var(--bg);
+  --foreground: var(--cream);
+  --card: var(--bg2);
+  --card-foreground: var(--cream);
+  --popover: var(--bg2);
+  --popover-foreground: var(--cream);
+  --primary: var(--vermillion);
+  --primary-foreground: var(--cream);
+  --secondary: rgb(244 236 216 / 0.1);
+  --secondary-foreground: var(--cream);
+  --muted-foreground: var(--muted);
+  --accent: var(--gold);
+  --accent-foreground: var(--ink);
+  --destructive: var(--vermillion);
+  --border: rgb(244 236 216 / 0.16);
+  --input: rgb(244 236 216 / 0.14);
+  --ring: var(--gold);
+  --radius: 0.875rem;
+}
+
+@theme inline {
+  /* Brand colors -> Tailwind utilities:
+     bg-bg, bg-bg2, text-cream, text-ink, bg-vermillion, bg-vermillion-dark,
+     text-gold, text-gold-light, text-muted (+ border-*, ring-*, from-*, ...) */
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-vermillion: var(--vermillion);
+  --color-vermillion-dark: var(--vermillion-dark);
+  --color-vermillion-light: var(--vermillion-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-muted: var(--muted);
+
+  /* shadcn semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Font utilities are declared with @utility rather than as `--font-*` theme
+   keys, because a theme key of the same name as the CSS variable it reads
+   (`--font-display: var(--font-display)`) resolves to a cycle. */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-body {
+  font-family: var(--font-body);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    min-height: 100dvh;
+    color: var(--cream);
+    font-family: var(--font-body);
+    /* Fixed so the radial wash reads as one light source over the whole page
+       instead of re-tiling per scroll container. */
+    background-color: var(--bg);
+    background-image: radial-gradient(
+      circle at 30% 0%,
+      var(--bg2),
+      var(--bg) 70%
+    );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── The surround, from tablet width up ───────────────────────────────────
+     `AppShell` caps the column, so on anything wider than a phone there is real
+     space either side of it. That space is the backdrop of the experience, not
+     leftover margin, and two changes are what make it read that way.
+
+     1. The wash recentres. At phone width the light source sits at 30% because
+        that is where the eye enters a single-column screen. On a 1440px screen
+        30% is 432px in — well left of a centred column — so the brightest part
+        of the page lands on empty air and the column itself sits in shade.
+        Moving the source to 50% puts the column back under the light. The
+        `--bg` stop also moves 70% → 72%, and that is compensation, not taste:
+        the gradient is sized `farthest-corner`, so recentring SHRINKS its
+        radius (at 1440x900, 1351px → 1152px) and a stop left at 70% would land
+        ~140px tighter than before — the wash would read as having contracted
+        at the same moment it was supposed to open out.
+
+     2. The far edges fall off toward `--ink`, not toward black: the corners
+        stay inside the palette, and the deepening reads as the same light
+        source running out rather than as a filter over the page. The fade is
+        exactly as wide as the space beside the widest column any route uses
+        (36rem, the admin cap), so it reaches its transparent end before it can
+        touch page content at any width — and it grows as the screen does,
+        which is what keeps a 1440px screen from looking like a 768px one with
+        more nothing on it.
+
+     Both are extra layers on the `body` background, so nothing new enters the
+     z-order and the SeasonalAmbience canvas (z-0) still paints over them and
+     under the app (z-10) — the particles drift across the surround, which is
+     the half of the backdrop that moves.
+
+     The `color-mix` arguments are in the order `transparent 62%, var(--ink)`
+     rather than the more natural `var(--ink) 38%, transparent`, and that is not
+     stylistic: Lightning CSS emits an `@supports`-guarded fallback for browsers
+     without `color-mix`, built from the FIRST argument. Written the natural way
+     the fallback is solid `--ink` — a hard dark band down both edges. This way
+     the fallback is `transparent`, so those browsers simply get the recentred
+     wash and no edge treatment, which is the right thing to lose. */
+  @media (min-width: 48rem) {
+    body {
+      --surround-fade: calc((100vw - 36rem) / 2);
+
+      background-image:
+        linear-gradient(
+          to right,
+          color-mix(in srgb, transparent 62%, var(--ink)),
+          transparent var(--surround-fade)
+        ),
+        linear-gradient(
+          to left,
+          color-mix(in srgb, transparent 62%, var(--ink)),
+          transparent var(--surround-fade)
+        ),
+        radial-gradient(circle at 50% 0%, var(--bg2), var(--bg) 72%);
+    }
+  }
+}
