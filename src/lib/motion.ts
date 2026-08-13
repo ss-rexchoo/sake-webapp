@@ -54,40 +54,36 @@ export const STAGGER_DELAY = 0.16;
 export const HOVER_DURATION = 0.2;
 
 /**
- * How long the reveal badge holds before the results replace it, in seconds.
- * Long enough to read as "we are choosing for you", short enough that it never
- * becomes a toll booth on a 20–40 second journey (plan v2 §1). Also exactly one
- * full pass of the badge's light sweep, so the sequence never cuts mid-shimmer.
- */
-export const REVEAL_HOLD = 1.1;
-
-/**
- * The reveal's light sweep: one pass, starting once the badge has landed and
- * finishing exactly as `REVEAL_EXIT` begins (0.35 + 0.75 = 1.1 = `REVEAL_HOLD`).
- */
-export const REVEAL_SHIMMER = 0.75;
-
-/** Held so the sweep crosses a settled badge rather than one still scaling in. */
-export const REVEAL_SHIMMER_DELAY = 0.35;
-
-/**
- * Easing for a specular sweep — near-linear on purpose.
+ * How long the reveal holds before the results replace it, in seconds.
  *
- * `EASE_SOFT` and every other curve here decelerates, which is right for
- * something arriving somewhere. A reflection is not arriving: it crosses at a
- * constant rate. An ease-in-out here makes the light dwell at the top and bottom
- * of the badge and whip through the middle, which reads as a pulsing band rather
- * than a highlight travelling across a surface. The faint softening at each end
- * only takes the hard edge off the loop seam.
+ * Long enough to read as "we are choosing for you", short enough that it never
+ * becomes a toll booth on a 20–40 second journey (plan v2 §1).
+ *
+ * Raised from 1.1 after the reveal was rebuilt around the compass dot. The old
+ * value was sized for a looping shimmer, which has no payoff moment — it could
+ * be cut anywhere. The new sequence ends on the guest's actual score, and at 1.1
+ * that number finished fading in at ~0.98 and was gone at 1.10: **0.12s of
+ * visibility for the thing the whole sequence exists to deliver.** The user's
+ * words were that the animation was good but "the transition from animation to
+ * match to next screen is too fast" — this is the number behind that.
+ *
+ * 1.55 gives the ring ~0.57s to be read, which is about the floor for a
+ * two-digit number a guest is not expecting yet. If `RING_IN` in
+ * `RevealSequence` changes, this has to move with it — the value that matters is
+ * the GAP between the ring landing and the swap, not this figure on its own.
  */
-export const EASE_SWEEP: [number, number, number, number] = [0.3, 0.1, 0.7, 0.9];
+export const REVEAL_HOLD = 1.55;
 
 /**
- * The reveal's hand-off to the results. Deliberately shorter than
- * `ITEM_DURATION`: the badge is leaving, and a slow exit would read as the app
- * hesitating rather than handing over.
+ * The reveal's hand-off to the results. Still shorter than `ITEM_DURATION`: the
+ * reveal is leaving, and a slow exit reads as the app hesitating rather than
+ * handing over.
+ *
+ * 0.28 rather than 0.22 — a fraction more, because what leaves now is a number
+ * the guest was reading rather than a decorative badge, and snatching it away
+ * is what made the hand-off feel abrupt even once the hold was long enough.
  */
-export const REVEAL_EXIT = 0.22;
+export const REVEAL_EXIT = 0.28;
 
 /**
  * The region panel's exit on the map. Sits alongside `REVEAL_EXIT` for the same

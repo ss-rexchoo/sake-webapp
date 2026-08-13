@@ -41,15 +41,21 @@ import type { TastePoint } from "@/lib/types";
  * behind it, reads as the same continuity with none of the coupling.
  *
  * ── Timing ──────────────────────────────────────────────────────────────────
- * The whole sequence is `REVEAL_HOLD` (1.1s) and must stay there. §1 promises a
- * 20–40 second journey and this is the one deliberate pause in it; a reveal that
- * grew because it got better would still be a toll booth.
+ * The whole sequence runs inside `REVEAL_HOLD`. §1 promises a 20–40 second
+ * journey and this is the one deliberate pause in it, so it stays tight — but
+ * the number at the end has to be readable, which is what sets the hold.
  *
  *   0.00  pad + dot fade up
  *   0.20  dot has landed on the guest's point and rests there
  *   0.58  grid dissolves, dot begins travelling
  *   0.78  dot arrives centre, ring and score fade in
- *   1.10  `RevealGate` swaps to the results, this exits over `REVEAL_EXIT`
+ *   0.98  the score is fully legible
+ *   1.55  `RevealGate` swaps to the results, this exits over `REVEAL_EXIT`
+ *
+ * The load-bearing figure is the GAP between 0.98 and the swap — the time the
+ * guest actually has to read their score. At `REVEAL_HOLD` 1.1 that gap was
+ * 0.12s and the sequence felt like it snatched the answer away. It is now
+ * ~0.57s. Change `RING_IN` and `REVEAL_HOLD` together, not separately.
  *
  * ── Reduced motion ──────────────────────────────────────────────────────────
  * The travel is `x`/`y`, and the growth is `scale`, so `MotionConfig
