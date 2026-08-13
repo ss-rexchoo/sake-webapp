@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { RevealSequence } from "@/components/RevealSequence";
+import type { TastePoint } from "@/lib/types";
 import { EASE_SOFT, ITEM_DURATION, REVEAL_HOLD } from "@/lib/motion";
 
 /** Session-scoped, so a fresh QR scan at the next table starts clean. */
@@ -51,10 +52,16 @@ function writeSeen(value: string) {
 export function RevealGate({
   revealKey,
   announcement,
+  point,
+  topScore,
   children,
 }: {
   /** Identifies this reveal. Same key twice in a session = skip the theatre. */
   revealKey: string;
+  /** Where the guest left the compass — the reveal is built from it. */
+  point: TastePoint;
+  /** Top match score, already floored. The ring lands on this number. */
+  topScore: number;
   /** Read out when the results land — see the status region below. */
   announcement: string;
   children: ReactNode;
@@ -102,7 +109,7 @@ export function RevealGate({
             {children}
           </motion.div>
         ) : (
-          <RevealSequence key="reveal" />
+          <RevealSequence key="reveal" point={point} topScore={topScore} />
         )}
       </AnimatePresence>
     </>

@@ -88,6 +88,11 @@ export default async function TasteResultsPage({
             ? `No perfect match tonight. Showing the ${matches.length} closest.`
             : `${matches.length} matches found.`
         }
+        // The reveal is built out of the guest's own input: the dot starts where
+        // they left the compass and resolves into the score it produced. Both
+        // values are already computed above — nothing extra is fetched.
+        point={point}
+        topScore={matches[0].score}
       >
         <TasteResults
           matches={matches}
