@@ -52,20 +52,33 @@ export interface FridgeBadgeProps {
  * the only place saturated gold is used at size.
  *
  * ── How it wins the page ────────────────────────────────────────────────────
- * The sake name is 26px cream on indigo. This is a 240px gold-gradient block
- * carrying a 72px number in ink — inverted against everything around it, the
- * only warm mass on a cold screen, and the only thing still moving once the
- * page has settled. It is ~2.75x the name's cap height and reads first from
- * arm's length, which is the actual use case: a phone on a table, glanced at
- * while walking to a fridge.
+ * NOT by size. This is a 176px gold-gradient block carrying a 50px number in
+ * ink, against a 26px cream sake name — under 2x the name's cap height, and
+ * about half the reading column. It wins on three other things, which is the
+ * point worth keeping:
  *
- * Deliberately wider than the prototype's 150px. At 150px on a 390px screen the
- * badge is a footnote below the fold of attention; the plan calls it the most
- * important element on the page, so it takes ~2/3 of the reading column (69%
- * on a phone; 59% at `md`, where the column outgrows the badge slightly even
- * after the badge takes its own step up — see the note on the card below).
- * The ratio that actually decides whether the number wins the page is the one
- * against the name, and that holds at 2.77 / 2.76 across the whole range.
+ *   1. It is the only INVERTED surface on the page — dark ink on a light warm
+ *      block, where everything else is light-on-indigo.
+ *   2. It is the only saturated gold MASS. Gold is otherwise spent on hairlines
+ *      and kickers (and, deliberately, one foil capsule on the bottle).
+ *   3. It ARRIVES LAST, 0.26s after the attribute bars settle. Being the final
+ *      thing to move is what makes it read as the conclusion.
+ *
+ * It was 240px with a 72px numeral, at 69% of the column and 2.76x the name.
+ * Shown three sizes side by side on a real phone, the user chose this one:
+ * "the color and design is sharp enough and confirm people will notice, it
+ * dont have to be big". That is the correct reading of the three mechanisms
+ * above — the block was carrying belt and braces.
+ *
+ * Two practical gains: it stops being the element that forces every other thing
+ * on the page to shrink to fit (see the compression note in the detail page),
+ * and it reads as confident rather than loud, which is the register the rest of
+ * this app is in.
+ *
+ * If you are tempted to grow it again, check first whether the actual problem is
+ * that one of the three mechanisms above has been weakened — gold leaking
+ * elsewhere, the inversion diluted, or the entrance cascade broken. Size is the
+ * least effective of the four levers and the only one with a page-layout cost.
  *
  * ── Out of stock ────────────────────────────────────────────────────────────
  * The badge is a promise that a guest will walk to the fridge and find the
@@ -83,8 +96,7 @@ export interface FridgeBadgeProps {
  *
  * An infinite loop never resolves, so after its first cycle it asks for
  * attention without carrying new information. This badge does not need it. It
- * already wins the page by measurement — the only gold, the only inverted
- * surface, ~2/3 of the reading column, ~2.76x the sake name's cap height — and,
+ * already wins the page — the only gold mass, the only inverted surface — and,
  * decisively, it is the LAST thing to arrive, landing 0.26s after the attribute
  * bars settle. That delay is what makes it read as the page's conclusion.
  * Attention is earned by the entrance; a permanent pulse spends it again every
@@ -133,23 +145,19 @@ export function FridgeBadge({
           // longer animates, so there is nothing for Motion to drive.
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-3 rounded-[3rem] bg-gold/30 opacity-55 blur-2xl"
+            className="pointer-events-none absolute -inset-3 rounded-[2.5rem] bg-gold/30 opacity-55 blur-2xl"
           />
         ) : null}
 
         <motion.div
           className={cn(
             // The badge takes the same one step up at `md` that the sake name
-            // and every other heading takes (240 → 272px is 1.133, the hero's
-            // exact ratio). It is not decoration: this component's whole claim
-            // is that the number is the most dominant thing on the page, and
-            // that claim is measured — ~2/3 of the reading column, ~2.75x the
-            // name's cap height. Leave the badge fixed while the column grows
-            // to 464px of content and the name grows to 29px and both numbers
-            // quietly become false (52% and 2.48), which is the defect this
-            // file exists to prevent. If the page's type scales, its conclusion
-            // scales with it.
-            "relative w-60 rounded-[2rem] px-6 py-5 text-center md:w-[17rem]",
+            // and every other heading takes (176 → 200px is 1.133, the hero's
+            // exact ratio). Not decoration: leave the badge fixed while the
+            // column grows to 464px and the name to 29px, and the badge quietly
+            // shrinks relative to both. If the page's type scales, its
+            // conclusion scales with it.
+            "relative w-44 rounded-[1.75rem] px-5 py-5 text-center md:w-50",
             inStock
               ? "bg-linear-160 from-gold-light to-gold text-ink"
               : "border border-cream/20 surface-8 text-cream",
@@ -167,9 +175,9 @@ export function FridgeBadge({
           >
             {inStock ? "Find me" : "Bottle"}
           </p>
-          {/* 72 → 80px at `md`, which restores the 2.76x ratio against the
-              29px sake name. See the note on the badge's own width above. */}
-          <p className="font-display text-[4.5rem] leading-none font-bold md:text-[5rem]">
+          {/* 50 → 56px at `md`, the same 1.111 step the badge's width takes,
+              so the numeral and the block it sits in scale together. */}
+          <p className="font-display text-[3.125rem] leading-none font-bold md:text-[3.5rem]">
             <span aria-hidden="true">#</span>
             <span className="sr-only">Number </span>
             {fridgeNumber}
@@ -209,8 +217,8 @@ export function FridgeBadge({
       ) : null}
 
       {!inStock ? (
-        // `max-w-60` matches the badge's own 240px, and the `md` step matches
-        // the badge's `md:w-[17rem]` — the notice is an annotation on the badge,
+        // `max-w-44` matches the badge's own 176px, and the `md` step matches
+        // the badge's `md:w-50` — the notice is an annotation on the badge,
         // so the two widths have to move together. Left to size itself, this
         // notice fills the full 350px column and becomes the widest element on
         // the page — a vermillion box out-massing the thing it annotates.
@@ -218,7 +226,7 @@ export function FridgeBadge({
         // `mt-4` rather than `mt-2` because the price above it is optional: with
         // a null price this is the badge's immediate neighbour, and 8px glued it
         // to the badge's edge.
-        <p className="mt-4 max-w-60 md:max-w-[17rem] rounded-lg border border-vermillion/45 bg-vermillion/15 px-3.5 py-2.5 text-center text-[12.5px] leading-relaxed text-vermillion-light">
+        <p className="mt-4 max-w-44 md:max-w-50 rounded-lg border border-vermillion/45 bg-vermillion/15 px-3.5 py-2.5 text-center text-[12.5px] leading-relaxed text-vermillion-light">
           Ask your server what&rsquo;s open instead.
         </p>
       ) : null}
